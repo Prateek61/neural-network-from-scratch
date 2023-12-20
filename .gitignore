@@ -1,0 +1,7 @@
+out
+build
+build_test
+data
+Makefile
+.vs
+.vscode
