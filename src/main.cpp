@@ -1,8 +1,6 @@
-#include "matrix.h"
+#include <iostream>
 
 int main()
 {
-    nn::matrix m;
-    m.test();
-    return 0;
+	return 0;
 }

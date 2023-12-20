@@ -1,11 +1,7 @@
 // File: src/matrix.cpp
 // Purpose: Implementation file for matrix.h.
 
-#include "matrix.h"
+#include "../include/Matrix.h"
 
 #include <iostream>
 
-void nn::matrix::test()
-{
-    std::cout << "Hello, world!" << std::endl;
-}
