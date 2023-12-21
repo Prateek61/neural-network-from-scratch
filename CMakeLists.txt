@@ -22,11 +22,14 @@ set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 # Set Source Files
 set(SOURCE_FILES
     ${SOURCE_DIR}/main.cpp
-    ${SOURCE_DIR}/matrix.cpp
+
+    ${SOURCE_DIR}/AlignedMemoryAllocator.cpp
+    ${SOURCE_DIR}/Matrix.cpp
 )
 # Set Include Files
 set(INCLUDE_FILES
-    ${INCLUDE_DIR}/matrix.h
+    ${INCLUDE_DIR}/AlignedMemoryAllocator.h
+    ${INCLUDE_DIR}/Matrix.h
 )
 
 # Add Executable
