@@ -82,7 +82,7 @@ TEST(MatrixTest, MatrixMultiplication) {
     mat2(2, 1) = 12;
 
     // Expected result for the multiplication
-    constexpr int expectedResult[4] = { 58, 64, 139, 154 };
+    constexpr int expected_result[4] = { 58, 64, 139, 154 };
 
     // Perform matrix multiplication
     ASSERT_NO_THROW(nn::Matrix<int>::multiply(mat1, mat2, result));
@@ -90,7 +90,7 @@ TEST(MatrixTest, MatrixMultiplication) {
     // Validate the result
     for (size_t i = 0; i < result.get_rows(); ++i) {
         for (size_t j = 0; j < result.get_cols(); ++j) {
-            ASSERT_EQ(result(i, j), expectedResult[i * result.get_cols() + j]);
+            ASSERT_EQ(result(i, j), expected_result[i * result.get_cols() + j]);
         }
     }
 }

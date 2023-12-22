@@ -25,11 +25,17 @@ set(SOURCE_FILES
 
     ${SOURCE_DIR}/AlignedMemoryAllocator.cpp
     ${SOURCE_DIR}/Matrix.cpp
+    ${SOURCE_DIR}/Layer.cpp
+    ${SOURCE_DIR}/ActivationFunction.cpp
+    ${SOURCE_DIR}/NeuralNetwork.cpp
 )
 # Set Include Files
 set(INCLUDE_FILES
     ${INCLUDE_DIR}/AlignedMemoryAllocator.h
     ${INCLUDE_DIR}/Matrix.h
+    ${INCLUDE_DIR}/Layer.h
+    ${INCLUDE_DIR}/ActivationFunction.h
+    ${INCLUDE_DIR}/NeuralNetwork.h
 )
 
 # Add Executable
