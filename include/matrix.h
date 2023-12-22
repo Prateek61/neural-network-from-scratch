@@ -9,8 +9,9 @@
 #include "AlignedMemoryAllocator.h" // nn::utils::AlignedMemoryAllocator
 
 #include <stdexcept> // std::runtime_error
-#include <Matrix.h> // nn::Matrix
-#include <vector> // std::vector
+#include <Matrix.h>	 // nn::Matrix
+#include <vector>	 // std::vector
+#include <iostream>
 
 namespace nn
 {
@@ -54,7 +55,7 @@ namespace nn
 		/// Constructor for a matrix of size rows x cols.
 		/// </summary>
 		/// <param name="data">2d vector representing the matrix</param>
-		explicit Matrix(const std::vector<std::vector<T>>& data);
+		explicit Matrix(const std::vector<std::vector<T>> &data);
 
 		/// <summary>
 		/// Constructor for a matrix of size rows x cols.
@@ -62,41 +63,41 @@ namespace nn
 		/// <param name="data">1d vector representing the matrix</param>
 		/// <param name="rows">Number of rows in this matrix</param>
 		/// <param name="cols">Number of columns in this matrix</param>
-		Matrix(const std::vector<T>& data, size_t rows, size_t cols);
+		Matrix(const std::vector<T> &data, size_t rows, size_t cols);
 
 		/// <summary>
 		/// Copy constructor.
 		/// </summary>
-		Matrix(const Matrix<T>& other);
+		Matrix(const Matrix<T> &other);
 
 		/// <summary>
 		/// Delete the assignment operator.
 		/// </summary>
-		Matrix& operator=(const Matrix<T>& other) = delete;
+		Matrix &operator=(const Matrix<T> &other) = delete;
 
 		/// <summary>
 		/// Returns the element at row, col.
 		/// </summary>
 		/// <returns>Reference to the element at row, col</returns>
-		[[nodiscard]] T& operator()(size_t row, size_t col);
+		[[nodiscard]] T &operator()(size_t row, size_t col);
 
 		/// <summary>
 		/// Returns the element at row, col.
 		/// </summary>
 		/// <returns>Copy of element at row, col</returns>
-		[[nodiscard]] const T& operator()(size_t row, size_t col) const;
+		[[nodiscard]] const T &operator()(size_t row, size_t col) const;
 
 		/// <summary>
 		/// Returns the element at index of the matrix data array.
 		/// </summary>
 		/// <returns>Reference to the element at index</returns>
-		[[nodiscard]] T& operator[](size_t index);
+		[[nodiscard]] T &operator[](size_t index);
 
 		/// <summary>
 		/// Returns the element at index of the matrix data array.
 		/// </summary>
 		/// <returns>Copy of the element at index</returns>
-		[[nodiscard]] const T& operator[](size_t index) const;
+		[[nodiscard]] const T &operator[](size_t index) const;
 
 		/// <summary>
 		/// Returns the element at row, col.
@@ -114,13 +115,13 @@ namespace nn
 		/// Returns the matrix data.
 		/// </summary>
 		/// <returns>Array to type T</returns>
-		[[nodiscard]] T* get_data();
+		[[nodiscard]] T *get_data();
 
 		/// <summary>
 		/// Returns the matrix data.
 		/// </summary>
 		/// <returns>Array to the type T</returns>
-		[[nodiscard]] const T* get_data() const;
+		[[nodiscard]] const T *get_data() const;
 
 		/// <summary>
 		/// Returns the number of rows in the matrix.
@@ -150,35 +151,49 @@ namespace nn
 		/// <param name="matrix1">First Matrix</param>
 		/// <param name="matrix2">Second Matrix</param>
 		/// <param name="result">Result matrix</param>
-		static void multiply(const Matrix<T>& matrix1, const Matrix<T>& matrix2, Matrix<T>& result);
+		static void multiply(const Matrix<T> &matrix1, const Matrix<T> &matrix2, Matrix<T> &result);
 
 		/// <summary>
 		/// Performs matrix multiplication on matrix1 and matrix2 and stores the result in this matrix.
 		/// </summary>
 		/// <param name="matrix1">First Matrix</param>
 		/// <param name="matrix2">Second Matrix</param>
-		void multiply(const Matrix<T>& matrix1, const Matrix<T>& matrix2);
+		void multiply(const Matrix<T> &matrix1, const Matrix<T> &matrix2);
 
 		/// <summary>
 		/// Performs an element wise operation on this matrix with other matrix and stores the result in this matrix.
 		/// </summary>
 		/// <param name="other">Other matrix</param>
 		/// <param name="operation">Function (First argument is value of this and Second is value of other)</param>
-		void perform_element_wise_operation(const Matrix<T>& other, const std::function<T(T, T)>& operation);
+		void perform_element_wise_operation(const Matrix<T> &other, const std::function<T(T, T)> &operation);
 
 		/// <summary>
 		/// Performs an element wise operation on this matrix.
 		/// </summary>
 		/// <param name="operation">Function</param>
-		void perform_element_wise_operation(const std::function<T(T)>& operation);
+		void perform_element_wise_operation(const std::function<T(T)> &operation);
 
 		/// <summary>
 		/// Randomizes the contents of this matrix between min and max.
 		/// </summary>
-		void randomize(const T& min, const T& max);
+		void randomize(const T &min, const T &max);
+
+		friend std::ostream &operator<<(std::ostream &OUT, const Matrix<T> &mat)
+		{
+
+			for (int x = 0; x < mat.get_cols(); x++)
+			{
+				for (int y = 0; y < mat.get_rows(); y++)
+				{
+
+					OUT << mat(x, y) << "\t";
+				}
+				OUT << std::endl;
+			}
+			return OUT;
+		}
 	};
 }
-
 
 #pragma region Implementation
 template <typename T>
@@ -196,7 +211,7 @@ nn::Matrix<T>::Matrix(const size_t rows, const size_t cols)
 }
 
 template <typename T>
-nn::Matrix<T>::Matrix(const std::vector<std::vector<T>>& data)
+nn::Matrix<T>::Matrix(const std::vector<std::vector<T>> &data)
 	: rows_(0), cols_(0)
 {
 	// Initializes the matrix with the size of the data.
@@ -212,9 +227,8 @@ nn::Matrix<T>::Matrix(const std::vector<std::vector<T>>& data)
 	}
 }
 
-
 template <typename T>
-nn::Matrix<T>::Matrix(const std::vector<T>& data, const size_t rows, const size_t cols)
+nn::Matrix<T>::Matrix(const std::vector<T> &data, const size_t rows, const size_t cols)
 	: rows_(0), cols_(0)
 {
 	// Initializes the matrix with the size of the data.
@@ -228,7 +242,7 @@ nn::Matrix<T>::Matrix(const std::vector<T>& data, const size_t rows, const size_
 }
 
 template <typename T>
-nn::Matrix<T>::Matrix(const Matrix<T>& other)
+nn::Matrix<T>::Matrix(const Matrix<T> &other)
 	: rows_(0), cols_(0)
 {
 	this->init(other.get_rows(), other.get_cols());
@@ -237,33 +251,29 @@ nn::Matrix<T>::Matrix(const Matrix<T>& other)
 	this->allocator_.copy_data(other.allocator_);
 }
 
-
 template <typename T>
-T& nn::Matrix<T>::operator()(const size_t row, const size_t col)
+T &nn::Matrix<T>::operator()(const size_t row, const size_t col)
 {
 	return this->allocator_.get()[row * this->cols_ + col];
 }
 
-
 template <typename T>
-const T& nn::Matrix<T>::operator()(const size_t row, const size_t col) const
+const T &nn::Matrix<T>::operator()(const size_t row, const size_t col) const
 {
 	return this->allocator_.get()[row * this->cols_ + col];
 }
 
-
 template <typename T>
-T& nn::Matrix<T>::operator[](const size_t index)
+T &nn::Matrix<T>::operator[](const size_t index)
 {
 	return this->allocator_.get()[index];
 }
 
 template <typename T>
-const T& nn::Matrix<T>::operator[](const size_t index) const
+const T &nn::Matrix<T>::operator[](const size_t index) const
 {
 	return this->allocator_.get()[index];
 }
-
 
 template <typename T>
 T nn::Matrix<T>::at(const size_t row, const size_t col) const
@@ -278,13 +288,13 @@ T nn::Matrix<T>::at(const size_t index) const
 }
 
 template <typename T>
-T* nn::Matrix<T>::get_data()
+T *nn::Matrix<T>::get_data()
 {
 	return this->allocator_.get();
 }
 
 template <typename T>
-const T* nn::Matrix<T>::get_data() const
+const T *nn::Matrix<T>::get_data() const
 {
 	return this->allocator_.get();
 }
@@ -300,7 +310,6 @@ size_t nn::Matrix<T>::get_cols() const
 {
 	return this->cols_;
 }
-
 
 template <typename T>
 void nn::Matrix<T>::clear()
@@ -331,7 +340,7 @@ void nn::Matrix<T>::init(const size_t rows, const size_t cols)
 }
 
 template <typename T>
-void nn::Matrix<T>::multiply(const Matrix<T>& matrix1, const Matrix<T>& matrix2, Matrix<T>& result)
+void nn::Matrix<T>::multiply(const Matrix<T> &matrix1, const Matrix<T> &matrix2, Matrix<T> &result)
 {
 	// Initialize the result matrix to default values.
 	for (size_t i = 0; i < result.rows_ * result.cols_; i++)
@@ -353,10 +362,9 @@ void nn::Matrix<T>::multiply(const Matrix<T>& matrix1, const Matrix<T>& matrix2,
 }
 
 template <typename T>
-void nn::Matrix<T>::multiply(const Matrix<T>& matrix1, const Matrix<T>& matrix2)
+void nn::Matrix<T>::multiply(const Matrix<T> &matrix1, const Matrix<T> &matrix2)
 {
-	if (matrix1.get_cols() != matrix2.get_rows() || this->get_rows() != matrix1.get_rows() || this->get_cols() !=
-		matrix2.get_cols())
+	if (matrix1.get_cols() != matrix2.get_rows() || this->get_rows() != matrix1.get_rows() || this->get_cols() != matrix2.get_cols())
 	{
 		throw std::runtime_error("Cannot multiply matrices with incompatible dimensions.");
 	}
@@ -365,7 +373,7 @@ void nn::Matrix<T>::multiply(const Matrix<T>& matrix1, const Matrix<T>& matrix2)
 }
 
 template <typename T>
-void nn::Matrix<T>::perform_element_wise_operation(const Matrix<T>& other, const std::function<T(T, T)>& operation)
+void nn::Matrix<T>::perform_element_wise_operation(const Matrix<T> &other, const std::function<T(T, T)> &operation)
 {
 	if (this->get_rows() != other.get_rows() || this->get_cols() != other.get_cols())
 	{
@@ -379,7 +387,7 @@ void nn::Matrix<T>::perform_element_wise_operation(const Matrix<T>& other, const
 }
 
 template <typename T>
-void nn::Matrix<T>::perform_element_wise_operation(const std::function<T(T)>& operation)
+void nn::Matrix<T>::perform_element_wise_operation(const std::function<T(T)> &operation)
 {
 	for (size_t i = 0; i < this->get_rows() * this->get_cols(); i++)
 	{
@@ -387,8 +395,8 @@ void nn::Matrix<T>::perform_element_wise_operation(const std::function<T(T)>& op
 	}
 }
 
-template<typename T>
-inline void nn::Matrix<T>::randomize(const T& min, const T& max)
+template <typename T>
+inline void nn::Matrix<T>::randomize(const T &min, const T &max)
 {
 	// Create a thread safe random number generator.
 	const auto random_number_generator = [min, max]() -> T
