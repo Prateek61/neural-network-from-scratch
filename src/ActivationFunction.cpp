@@ -1,67 +1,116 @@
 #include <ActivationFunction.h>
 #include "math.h"
+#include "matrix.h"
 
-float nn::activation_functions::Sigmoid::activate(float x){
-    return 1/(1+exp(-x));
+void nn::activation_functions::Sigmoid::activate(Matrix<float> &x){
+    x.perform_element_wise_operation([](float x) -> float
+    {
+
+       return 1/(1+exp(-x));
+    });
 }
 
-double nn::activation_functions::Sigmoid::activate(double x){
-    return 1/(1+exp(-x));
+void nn::activation_functions::Sigmoid::activate(Matrix<double> &x){
+    x.perform_element_wise_operation([](double x) -> double
+    {
+
+       return 1/(1+exp(-x));
+    });
 }
 
-float nn::activation_functions::Sigmoid::derivative(float x){
+void nn::activation_functions::Sigmoid::derivative(Matrix<float> &x){
 
-    return (1/(1+ exp(-x)))*(1-1/(1+exp(-x)));
+    x.perform_element_wise_operation([](float x) -> float
+    {
+
+       return (1/(1+ exp(-x)))*(1-1/(1+exp(-x)));
+    });
 
 }
-double nn::activation_functions::Sigmoid::derivative(double x){
+void nn::activation_functions::Sigmoid::derivative(Matrix<double> &x){
 
-    return (1/(1+ exp(-x)))*(1-1/(1+exp(-x)));
+    x.perform_element_wise_operation([](double x) -> double
+    {
+
+       return (1/(1+ exp(-x)))*(1-1/(1+exp(-x)));
+    });
 
 }
 
-float nn::activation_functions::ReLU::activate(float x){
+void nn::activation_functions::ReLU::activate(Matrix<float> &x){
     
-    return (x>0) * x;
+    x.perform_element_wise_operation([](float x) -> float
+    {
+
+       return (x>0) * x;
+    });
     
 }
-float nn::activation_functions::ReLU::derivative(float x){
+void nn::activation_functions::ReLU::derivative(Matrix<float> &x){
 
-    return (x>0);
-    
-}
+    x.perform_element_wise_operation([](float x) -> float
+    {
 
-double nn::activation_functions::ReLU::activate(double x){
-    
-    return (x>0) * x;
-    
-}
-double nn::activation_functions::ReLU::derivative(double x){
-
-    return (x>0);
-    
-}
-
-float nn::activation_functions::Tanh::activate(float x){
-    
-    return (exp(x) - exp(-x)) / (exp(x) + exp(-x));
-
-    
-}
-float nn::activation_functions::Tanh::derivative(float x){
-
-    return 1.0f - tanh(x) * tanh(x);
-
+       return (x>0);
+    });
     
 }
 
-double nn::activation_functions::Tanh::activate(double x){
+void nn::activation_functions::ReLU::activate(Matrix<double> &x){
     
-    return (exp(x) - exp(-x)) / (exp(x) + exp(-x));
+    x.perform_element_wise_operation([](double x) -> double
+    {
+
+       return (x>0) * x;
+    });
+    
+}
+void nn::activation_functions::ReLU::derivative(Matrix<double> &x){
+
+    x.perform_element_wise_operation([](double x) -> double
+    {
+
+       return (x>0);
+    });
+    
+}
+
+void nn::activation_functions::Tanh::activate(Matrix<float> &x){
+    
+    x.perform_element_wise_operation([](float x) -> float
+    {
+
+       return (exp(x) - exp(-x)) / (exp(x) + exp(-x));
+    });
+
+    
+}
+void nn::activation_functions::Tanh::derivative(Matrix<float> &x){
+
+    x.perform_element_wise_operation([](float x) -> float
+    {
+
+       return 1.0f - tanh(x) * tanh(x);
+    });
+
+    
+}
+
+void nn::activation_functions::Tanh::activate(Matrix<double> &x){
+    
+    x.perform_element_wise_operation([](double x) -> double
+    {
+
+       return (exp(x) - exp(-x)) / (exp(x) + exp(-x));
+    });
     
 }   
-double nn::activation_functions::Tanh::derivative(double x){
+void nn::activation_functions::Tanh::derivative(Matrix<double> &x){
 
-    return 1.0f - tanh(x) * tanh(x);
+    x.perform_element_wise_operation([](double x) -> double
+    {
+
+       return 1.0f - tanh(x) * tanh(x);
+    });
     
 }

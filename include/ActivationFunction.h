@@ -1,4 +1,5 @@
 #pragma once
+#include "matrix.h"
 
 namespace nn::activation_functions
 {
@@ -13,28 +14,28 @@ namespace nn::activation_functions
 		/// </summary>
 		/// <param name="x">Input</param>
 		/// <returns>Function value at x</returns>
-		virtual float activate(float x) = 0;
+		virtual void activate(Matrix<float> &x) = 0;
 
 		/// <summary>
 		/// Derivative of the activation function
 		/// </summary>
 		/// <param name="x">Input</param>
 		/// <returns>Derivative value at x</returns>
-		virtual float derivative(float x) = 0;
+		virtual void derivative(Matrix<float> &x) = 0;
 
 		/// <summary>
 		/// Activation function
 		/// </summary>
 		/// <param name="x">Input</param>
 		/// <returns>Function value at x</returns>
-		virtual double activate(double x) = 0;
+		virtual void activate(Matrix<double> &x) = 0;
 
 		/// <summary>
 		/// Derivative of the activation function
 		/// </summary>
 		/// <param name="x">Input</param>
 		/// <returns>Derivative value at x</returns>
-		virtual double derivative(double x) = 0;
+		virtual void derivative(Matrix<double> &x) = 0;
 	};
 
 
@@ -49,28 +50,28 @@ namespace nn::activation_functions
 		/// </summary>
 		/// <param name="x">Input</param>
 		/// <returns>Function value at x</returns>
-		float activate(float x) override;
+		void activate(Matrix<float> &x) override;
 
 		/// <summary>
 		/// Derivative of the activation function
 		/// </summary>
 		/// <param name="x">Input</param>
 		/// <returns>Derivative value at x</returns>
-		float derivative(float x) override;
+		void derivative(Matrix<float> &x) override;
 
 		/// <summary>
 		/// Activation function
 		/// </summary>
 		/// <param name="x">Input</param>
 		/// <returns>Function value at x</returns>
-		double activate(double x) override;
+		void activate(Matrix<double> &x) override;
 
 		/// <summary>
 		/// Derivative of the activation function
 		/// </summary>
 		/// <param name="x">Input</param>
 		/// <returns>Derivative value at x</returns>
-		double derivative(double x) override;
+		void derivative(Matrix<double> &x) override;
 	};
 
 
@@ -82,28 +83,28 @@ namespace nn::activation_functions
 		/// </summary>
 		/// <param name="x">Input</param>
 		/// <returns>Function value at x</returns>
-		float activate(float x) override;
+		void activate(Matrix<float> &x) override;
 
 		/// <summary>
 		/// Derivative of the activation function
 		/// </summary>
 		/// <param name="x">Input</param>
 		/// <returns>Derivative value at x</returns>
-		float derivative(float x) override;
+		void derivative(Matrix<float> &x) override;
 
 		/// <summary>
 		/// Activation function
 		/// </summary>
 		/// <param name="x">Input</param>
 		/// <returns>Function value at x</returns>
-		double activate(double x) override;
+		void activate(Matrix<double> &x) override;
 
 		/// <summary>
 		/// Derivative of the activation function
 		/// </summary>
 		/// <param name="x">Input</param>
 		/// <returns>Derivative value at x</returns>
-		double derivative(double x) override;
+		void derivative(Matrix<double> &x) override;
 	};
 
 
@@ -115,28 +116,28 @@ namespace nn::activation_functions
 		/// </summary>
 		/// <param name="x">Input</param>
 		/// <returns>Function value at x</returns>
-		float activate(float x) override;
+		void activate(Matrix<float> &x) override;
 
 		/// <summary>
 		/// Derivative of the activation function
 		/// </summary>
 		/// <param name="x">Input</param>
 		/// <returns>Derivative value at x</returns>
-		float derivative(float x) override;
+		void derivative(Matrix<float> &x) override;
 
 		/// <summary>
 		/// Activation function
 		/// </summary>
 		/// <param name="x">Input</param>
 		/// <returns>Function value at x</returns>
-		double activate(double x) override;
+		void activate(Matrix<double> &x) override;
 
 		/// <summary>
 		/// Derivative of the activation function
 		/// </summary>
 		/// <param name="x">Input</param>
 		/// <returns>Derivative value at x</returns>
-		double derivative(double x) override;
+		void derivative(Matrix<double> &x) override;
 	};
 
 
@@ -148,27 +149,27 @@ namespace nn::activation_functions
 		/// </summary>
 		/// <param name="x">Input</param>
 		/// <returns>Function value at x</returns>
-		float activate(float x) override;
+		void activate(Matrix<float> &x) override;
 
 		/// <summary>
 		/// Derivative of the activation function
 		/// </summary>
 		/// <param name="x">Input</param>
 		/// <returns>Derivative value at x</returns>
-		float derivative(float x) override;
+		void derivative(Matrix<float> &x) override;
 
 		/// <summary>
 		/// Activation function
 		/// </summary>
 		/// <param name="x">Input</param>
 		/// <returns>Function value at x</returns>
-		double activate(double x) override;
+		void activate(Matrix<double> &x) override;
 
 		/// <summary>
 		/// Derivative of the activation function
 		/// </summary>
 		/// <param name="x">Input</param>
 		/// <returns>Derivative value at x</returns>
-		double derivative(double x) override;
+		void derivative(Matrix<double> &x) override;
 	};
 }
