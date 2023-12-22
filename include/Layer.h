@@ -183,7 +183,7 @@ namespace nn
 		/// Resets the batch size of this layer and re-initializes the affected matrices
 		/// </summary>
 		/// <param name="batch_size"></param>
-		void change_batch_size(size_t batch_size);
+		void change_batch_size(const size_t batch_size);
 
 		/// <summary>
 		/// Returns the activation matrix of this layer
