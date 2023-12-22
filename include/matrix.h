@@ -197,6 +197,7 @@ nn::Matrix<T>::Matrix(const size_t rows, const size_t cols)
 
 template <typename T>
 nn::Matrix<T>::Matrix(const std::vector<std::vector<T>>& data)
+	: rows_(0), cols_(0)
 {
 	// Initializes the matrix with the size of the data.
 	this->init(data.size(), data[0].size());
@@ -214,6 +215,7 @@ nn::Matrix<T>::Matrix(const std::vector<std::vector<T>>& data)
 
 template <typename T>
 nn::Matrix<T>::Matrix(const std::vector<T>& data, const size_t rows, const size_t cols)
+	: rows_(0), cols_(0)
 {
 	// Initializes the matrix with the size of the data.
 	this->init(rows, cols);
