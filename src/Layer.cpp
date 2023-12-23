@@ -350,3 +350,88 @@ void nn::Layer::reset()
 	this->delta_biases_.reset();
 	this->delta_sums_.reset();
 }
+
+void nn::Layer::feed_forward(const Layer& previous_layer)
+{
+	// Check if this layer is initialized and is not the input layer
+	if (this->neuron_count_ == 0 || previous_layer.neuron_count_ == 0 || this->weights_ == nullptr)
+	{
+		throw std::runtime_error("Layer is not initialized.");
+	}
+
+	// Calculate the sums
+	this->sums_->calculate_sums_for_forward_propagation(*this->weights_, previous_layer.get_activations(), previous_layer.get_activations());
+	// Copy the sums to the activations matrix
+	this->activations_->operator=(*this->sums_);
+	// Apply the activation function to the activations matrix
+	this->activation_function_->activate(*this->activations_);
+}
+
+void nn::Layer::back_propagate(const Layer& next_layer, const Layer& previous_layer)
+{
+	// Check if this layer is initialized and is not the input layer
+	if (next_layer.weights_ == nullptr || previous_layer.activations_ == nullptr || this->weights_ == nullptr)
+	{
+		throw std::runtime_error("Layer is not initialized.");
+	}
+
+	// Calculate the delta activations
+	this->delta_activations_->calculate_delta_activation_for_back_propagation(next_layer.get_weights(), next_layer.get_delta_sums());
+
+	// Calculate the delta sums
+	*(this->delta_sums_) = *(this->sums_);
+	this->activation_function_->derivative(*this->delta_sums_);
+	this->delta_sums_->hadamard_product(*this->delta_activations_);
+
+	// Calculate delta biases
+	this->delta_biases_->calculate_delta_biases_for_back_propagation(*this->delta_sums_);
+
+	// Calculate delta weights
+	this->delta_weights_->calculate_delta_weights_for_back_propagation(previous_layer.get_activations(), *this->delta_sums_);
+}
+
+void nn::Layer::back_propagate(const Matrix<float>& expected_activations)
+{
+// Check if this layer is initialized and is not the input layer
+	if (this->activations_ == nullptr || this->weights_ == nullptr)
+	{
+		throw std::runtime_error("Layer is not initialized.");
+	}
+
+	// Calculate the delta activations
+	this->delta_activations_->calculate_delta_activation_from_expected_output(this->get_activations(), expected_activations);
+
+	// Calculate the delta sums
+	*(this->delta_sums_) = *(this->sums_);
+	this->activation_function_->derivative(*this->delta_sums_);
+	this->delta_sums_->hadamard_product(*this->delta_activations_);
+
+	// Calculate delta biases
+	this->delta_biases_->calculate_delta_biases_for_back_propagation(*this->delta_sums_);
+
+	// Calculate delta weights
+	this->delta_weights_->calculate_delta_weights_for_back_propagation(*this->activations_, *this->delta_sums_);
+}
+
+void nn::Layer::update_weights_and_biases(const float learning_rate)
+{
+	// Check if this layer is initialized and is not the input layer
+	if (this->weights_ == nullptr || this->biases_ == nullptr)
+	{
+		throw std::runtime_error("Layer is not initialized.");
+	}
+
+	// Update the weights and biases
+	this->weights_->perform_element_wise_operation(*this->delta_weights_,
+		[learning_rate](const float weight, const float delta_weight) -> float
+		{
+			return weight - learning_rate * delta_weight;
+		}
+	);
+	this->biases_->perform_element_wise_operation(*this->delta_biases_,
+		[learning_rate](const float bias, const float delta_bias) -> float
+		{
+			return bias - learning_rate * delta_bias;
+		}
+	);
+}

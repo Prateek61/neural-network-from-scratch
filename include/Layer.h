@@ -241,12 +241,18 @@ namespace nn
 		/// Runs back propagation on this layer
 		/// </summary>
 		/// <param name="next_layer">Next layer</param>
-		void back_propagate(const Layer& next_layer);
+		/// <param name="previous_layer">Previous Layer</param>
+		void back_propagate(const Layer& next_layer, const Layer& previous_layer);
 
 		/// <summary>
 		/// Runs back propagation on this layer with the given expected activations
 		/// </summary>
 		/// <param name="expected_activations">Expected output of the network</param>
 		void back_propagate(const Matrix<float>& expected_activations);
+
+		/// <summary>
+		/// Updates the weights and biases of this layer
+		/// </summary>
+		void update_weights_and_biases(const float learning_rate);
 	};
 }
