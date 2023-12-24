@@ -9,7 +9,7 @@
 #include <vector>	 // std::vector
 #include <iostream> // std::ostream
 
-#include "AlignedMemoryAllocator.h" // nn::utils::AlignedMemoryAllocator
+#include "NeuralNetwork/AlignedMemoryAllocator.h" // nn::utils::AlignedMemoryAllocator
 
 
 

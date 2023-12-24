@@ -3,7 +3,7 @@
 
 #include <gtest/gtest.h>
 
-#include "Matrix.h"
+#include <NeuralNetwork/Matrix.h>
 
 // Test case for default constructor
 TEST(MatrixTest, DefaultConstructor) {

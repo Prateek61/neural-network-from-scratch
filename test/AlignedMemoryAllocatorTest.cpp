@@ -3,7 +3,7 @@
 
 #include <gtest/gtest.h>
 
-#include "AlignedMemoryAllocator.h"
+#include <NeuralNetwork/AlignedMemoryAllocator.h>
 
 // Test case for default constructor
 TEST(AlignedMemoryAllocatorTest, DefaultConstructor) {

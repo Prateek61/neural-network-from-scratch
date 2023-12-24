@@ -7,8 +7,8 @@
 #include <list> // std::list
 #include <string> // std::string
 
-#include "Layer.h" // nn::Layer
-#include "DataSet.h" // nn::TrainingSet
+#include "NeuralNetwork/Layer.h" // nn::Layer
+#include "NeuralNetwork/DataSet.h" // nn::TrainingSet
 
 
 namespace nn

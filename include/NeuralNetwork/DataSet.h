@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Matrix.h"
+#include "NeuralNetwork/Matrix.h"
 
 namespace nn
 {

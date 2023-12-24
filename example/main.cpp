@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "NeuralNetwork.h"
+#include <NeuralNetwork/NeuralNetwork.h>
 
 int main()
 {	
@@ -15,7 +15,9 @@ int main()
 	nn.add_layer(std::move(second_layer));
 	nn.add_layer(std::move(third_layer));
 
-	nn.save_to_file("Pagal.txt");
+	nn.save_to_file("network.txt");
+
+    std::cout << "Hello World!\n";
 
 	return 0;
 }

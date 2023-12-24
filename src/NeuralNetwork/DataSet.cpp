@@ -1,4 +1,4 @@
-#include "DataSet.h"
+#include "NeuralNetwork/DataSet.h"
 
 nn::DataSet::DataSet()
 	: current_index_(0)

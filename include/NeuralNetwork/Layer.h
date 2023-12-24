@@ -5,8 +5,8 @@
 
 #include <memory> // std::unique_ptr
 
-#include "Matrix.h" // nn::Matrix
-#include "ActivationFunction.h" // nn::activation_functions::ActivationFunction
+#include "NeuralNetwork/Matrix.h" // nn::Matrix
+#include "NeuralNetwork/ActivationFunction.h" // nn::activation_functions::ActivationFunction
 
 namespace nn
 {

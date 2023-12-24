@@ -1,5 +1,5 @@
 #pragma once
-#include "matrix.h"
+#include "NeuralNetwork/Matrix.h"
 
 namespace nn::activation_functions
 {

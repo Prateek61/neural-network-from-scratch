@@ -1,6 +1,7 @@
-#include <ActivationFunction.h>
 #include <cmath>
-#include "Matrix.h"
+
+#include "NeuralNetwork/ActivationFunction.h"
+#include "NeuralNetwork/Matrix.h"
 
 void nn::activation_functions::Sigmoid::activate(Matrix<float>& mat)
 {

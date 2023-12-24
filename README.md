@@ -17,7 +17,7 @@ The project is setup with [cmake](https://cmake.org/). To run the project locall
 ```
 > Note: The build system can be changed by specifying the generator flag. For example, to use MinGW MakeFiles build system, append `-G "MinGW Makefiles"` to the above cmake command.
 
-> Note: If you also want to run the tests, append `-D BUILD_TESTS=ON` to the above cmake command.
+> Note: If you also want to run the tests, append `-D BUILD_TESTS=ON` to the above cmake command. To run example, append `-D BUILD_EXAMPLE=ON` to the above cmake command.
 
 ### Compile and run
 ```bash
@@ -27,4 +27,9 @@ The project is setup with [cmake](https://cmake.org/). To run the project locall
 ### Run Tests
 ```bash
   cmake --build build --target run_tests
+```
+
+### Run Example
+```bash
+  cmake --build build --target run_example
 ```
