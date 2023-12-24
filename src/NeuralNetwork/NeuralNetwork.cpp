@@ -42,7 +42,7 @@ void nn::NeuralNetwork::feed_forward()
 	}
 
 	// first item of the list
-	this->layers_.front()->set_activations(this->data_set_->get_batch_input(this->batch_size_));
+	this->layers_.front()->set_activations(this->data_set_->get_batch_input());
 
 	// iterate through the layers except the first one
 	for (auto it = std::next(this->layers_.begin()); it != this->layers_.end(); ++it)
@@ -60,7 +60,9 @@ void nn::NeuralNetwork::back_propagate()
 	}
 
 	// last item of the list
-	this->layers_.back()->back_propagate(this->data_set_->get_batch_output(this->batch_size_));
+	auto last_layer = std::prev(this->layers_.end());
+	auto second_to_last_layer = std::prev(last_layer);
+	(*last_layer)->back_propagate(this->data_set_->get_batch_output(), *second_to_last_layer->get());
 
 	// iterate through the second to the last layer to the second layer
 	for (auto it = std::prev(this->layers_.end(), 2); it != std::next(this->layers_.begin()); --it)
@@ -89,14 +91,49 @@ void nn::NeuralNetwork::train(const size_t epochs)
 {
 	for (size_t i = 0; i < epochs; ++i)
 	{
-		this->data_set_->reset();
-		while (!this->data_set_->is_end())
-		{
-			this->feed_forward();
-			this->back_propagate();
-			this->update_weights_and_biases();
-		}
+		train_one_epoch();
 	}
+}
+
+void nn::NeuralNetwork::train_one_epoch()
+{
+	this->data_set_->reset();
+	while (!this->data_set_->is_end())
+	{
+		this->feed_forward();
+		this->back_propagate();
+		this->update_weights_and_biases();
+
+		this->data_set_->go_to_next_batch();
+	}
+	this->data_set_->reset();
+}
+
+float nn::NeuralNetwork::get_loss()
+{
+	float loss = 0.0f;
+
+	this->data_set_->reset();
+
+	while(!this->data_set_->is_end())
+	{
+		this->feed_forward();
+
+		auto activation_matrix = this->get_output();
+		auto expected_matrix = this->data_set_->get_batch_output();
+
+		for (size_t i = 0; i < activation_matrix.get_rows() * activation_matrix.get_cols(); ++i)
+		{
+			const float temp = abs(activation_matrix[i] - expected_matrix[i]);
+			loss += temp * temp;
+		}
+		data_set_->go_to_next_batch();
+	}
+
+	this->data_set_->reset();
+
+	loss /= static_cast<float>(this->data_set_->get_total_size());
+	return loss;
 }
 
 void nn::NeuralNetwork::save_to_file(const std::string& file_name) const

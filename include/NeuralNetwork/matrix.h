@@ -8,6 +8,7 @@
 #include <stdexcept> // std::runtime_error
 #include <vector>	 // std::vector
 #include <iostream> // std::ostream
+#include <chrono> // std::chrono
 
 #include "NeuralNetwork/AlignedMemoryAllocator.h" // nn::utils::AlignedMemoryAllocator
 
@@ -502,17 +503,20 @@ template<typename T>
 inline void nn::Matrix<T>::calculate_sums_for_forward_propagation(const Matrix<T>& weights, const Matrix<T>& biases, const Matrix<T>& input)
 {
 	// Check if dimensions are compatible.
-	if (biases.get_rows() != this->get_rows() || biases.get_rows() != 1)
+	if (biases.get_rows() != this->get_rows() || biases.get_cols() != 1)
 	{
 		throw std::runtime_error("Cannot calculate sums for forward propagation with incompatible dimensions.");
 	}
 
 	// Calculate sums.
 	Matrix<T>::multiply(weights, input, *this);
-	this->perform_element_wise_operation([&](const T& value) -> T
+	for (size_t i = 0; i < this->get_rows(); i++)
 	{
-		return value + biases[&value - &this->operator[](0)];
-	});
+		for (size_t j = 0; j < this->get_cols(); j++)
+		{
+			this->operator()(i, j) += biases.at(i, 0);
+		}
+	}
 }
 
 template<typename T>

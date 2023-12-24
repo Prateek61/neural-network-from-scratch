@@ -9,7 +9,7 @@ namespace nn
 {
 	class DataSet
 	{
-	private:
+	protected:
 		/// <summary>
 		/// The current index of the training set.
 		/// </summary>
@@ -29,21 +29,19 @@ namespace nn
 		/// <summary>
 		/// Initializes the training set. (e.g. load data from file)
 		/// </summary>
-		virtual void initialize() = 0;
+		virtual void initialize(const size_t batch_size) = 0;
 
 		/// <summary>
 		/// Gets the next batch of input of training data.
 		/// </summary>
-		/// <param name="batch_size">Number of training data to return</param>
 		/// <returns>Training data</returns>
-		virtual nn::Matrix<float>& get_batch_input(const size_t batch_size) = 0;
+		virtual nn::Matrix<float>& get_batch_input() = 0;
 
 		/// <summary>
 		/// Gets the next batch of output of training data.
 		/// </summary>
-		/// <param name="batch_size">Number of data to return</param>
 		/// <returns>Output data</returns>
-		virtual nn::Matrix<float>& get_batch_output(const size_t batch_size) = 0;
+		virtual nn::Matrix<float>& get_batch_output() = 0;
 
 		/// <summary>
 		/// Indicates whether the training set has reached the end.
@@ -79,5 +77,10 @@ namespace nn
 		/// Gets the current index of the training set
 		/// </summary>
 		[[nodiscard]] size_t get_current_index() const;
+
+		/// <summary>
+		/// Increments the current index of the training set
+		/// </summary>
+		void go_to_next_batch();
 	};
 }
