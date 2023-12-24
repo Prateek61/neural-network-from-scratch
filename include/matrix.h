@@ -3,15 +3,15 @@
 
 #pragma once
 
-#include <random>
-#include <functional>
+#include <random> // std::random_device, std::mt19937, std::uniform_real_distribution
+#include <functional> // std::function
+#include <stdexcept> // std::runtime_error
+#include <vector>	 // std::vector
+#include <iostream> // std::ostream
 
 #include "AlignedMemoryAllocator.h" // nn::utils::AlignedMemoryAllocator
 
-#include <stdexcept> // std::runtime_error
-#include <Matrix.h>	 // nn::Matrix
-#include <vector>	 // std::vector
-#include <iostream>
+
 
 namespace nn
 {

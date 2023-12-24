@@ -239,6 +239,16 @@ void nn::Layer::change_batch_size(const size_t batch_size)
 	this->delta_sums_ = std::make_unique<Matrix<float>>(this->neuron_count_, batch_size);
 }
 
+size_t nn::Layer::get_neuron_count() const
+{
+	return this->neuron_count_;
+}
+
+size_t nn::Layer::get_batch_size() const
+{
+	return this->batch_size_;
+}
+
 const nn::Matrix<float>& nn::Layer::get_activations() const
 {
 	// Check if activations is initialized

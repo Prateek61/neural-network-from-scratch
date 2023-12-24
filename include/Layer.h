@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include <memory>
+#include <memory> // std::unique_ptr
 
-#include "Matrix.h"
-#include "ActivationFunction.h"
+#include "Matrix.h" // nn::Matrix
+#include "ActivationFunction.h" // nn::activation_functions::ActivationFunction
 
 namespace nn
 {
@@ -184,6 +184,17 @@ namespace nn
 		/// </summary>
 		/// <param name="batch_size"></param>
 		void change_batch_size(const size_t batch_size);
+
+		/// <summary>
+		/// Returns the neuron count of this layer
+		/// </summary>
+		[[nodiscard]] size_t get_neuron_count() const;
+
+		/// <summary>
+		/// Returns the batch size of this layer
+		/// </summary>
+		/// <returns></returns>
+		[[nodiscard]] size_t get_batch_size() const;
 
 		/// <summary>
 		/// Returns the activation matrix of this layer

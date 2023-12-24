@@ -28,6 +28,7 @@ set(SOURCE_FILES
     ${SOURCE_DIR}/Layer.cpp
     ${SOURCE_DIR}/ActivationFunction.cpp
     ${SOURCE_DIR}/NeuralNetwork.cpp
+    ${SOURCE_DIR}/DataSet.cpp
 )
 # Set Include Files
 set(INCLUDE_FILES
@@ -36,6 +37,7 @@ set(INCLUDE_FILES
     ${INCLUDE_DIR}/Layer.h
     ${INCLUDE_DIR}/ActivationFunction.h
     ${INCLUDE_DIR}/NeuralNetwork.h
+    ${INCLUDE_DIR}/DataSet.h
 )
 
 # Add Executable
