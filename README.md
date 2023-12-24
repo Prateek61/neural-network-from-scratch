@@ -19,17 +19,12 @@ The project is setup with [cmake](https://cmake.org/). To run the project locall
 
 > Note: If you also want to run the tests, append `-D BUILD_TESTS=ON` to the above cmake command. To run example, append `-D BUILD_EXAMPLE=ON` to the above cmake command.
 
-### Compile and run
+### Run Example
 ```bash
-  cmake --build build --target run_program
+  cmake --build build --target run_example
 ```
 
 ### Run Tests
 ```bash
   cmake --build build --target run_tests
-```
-
-### Run Example
-```bash
-  cmake --build build --target run_example
 ```
