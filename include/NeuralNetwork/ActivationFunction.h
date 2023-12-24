@@ -1,5 +1,9 @@
+// File: src/NeuralNetwork/NeuralNetwork.cpp
+// Purpose: Header file for ActivationFunction class.
+
 #pragma once
-#include "NeuralNetwork/Matrix.h"
+
+#include "NeuralNetwork/Matrix.h" // nn::Matrix
 
 namespace nn::activation_functions
 {

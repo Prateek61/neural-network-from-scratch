@@ -1,5 +1,5 @@
-// File: include/Layer.h
-// Purpose: Header file for Layer class
+// File: include/NeuralNetwork/Layer.h
+// Purpose: Header file for Layer class.
 
 #pragma once
 

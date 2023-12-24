@@ -1,6 +1,9 @@
+// File: include/NeuralNetwork/Dataset.h
+// Purpose: Header file for Dataset virtual class.
+
 #pragma once
 
-#include "NeuralNetwork/Matrix.h"
+#include "NeuralNetwork/Matrix.h" // nn::Matrix
 
 namespace nn
 {

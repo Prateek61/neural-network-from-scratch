@@ -1,3 +1,6 @@
+// File: src/NeuralNetwork/DataSet.cpp
+// Purpose: Implementation file for DataSet class.
+
 #include "NeuralNetwork/DataSet.h"
 
 nn::DataSet::DataSet()

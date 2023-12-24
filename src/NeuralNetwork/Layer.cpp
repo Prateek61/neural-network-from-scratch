@@ -1,5 +1,5 @@
-// File: src/Layer.cpp
-// Purpose: Source file for Layer objects, which represent a single layer of a neural network.
+// File: src/NeuralNetwork/Layer.cpp
+// Purpose: Source file for Layer class, which represent a single layer of a neural network.
 
 #include "NeuralNetwork/Layer.h"
 

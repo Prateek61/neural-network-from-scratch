@@ -1,4 +1,5 @@
 # File: example/CMakeLists.txt
+# Purpose: CMake file for NeuralNetwork example
 
 # Set project name
 project(NeuralNetworkExample)

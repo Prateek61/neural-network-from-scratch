@@ -1,5 +1,5 @@
-// File: include/AlignedMemoryAllocator.h
-// Purpose: Header file for AlignedMemoryAllocator.cpp.
+// File: include/NeuralNetwork/AlignedMemoryAllocator.h
+// Purpose: Header file for AlignedMemoryAllocator template class.
 
 #pragma once
 

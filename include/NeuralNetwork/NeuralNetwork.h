@@ -1,5 +1,5 @@
-// File: src/NeuralNetwork.h
-// Purpose: Header file for NeuralNetwork.cpp.
+// File: include/NeuralNetwork/Matrix.h
+// Purpose: Header file for NeuralNetwork class.
 
 #pragma once
 

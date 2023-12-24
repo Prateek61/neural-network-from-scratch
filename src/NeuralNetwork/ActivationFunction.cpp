@@ -1,7 +1,11 @@
-#include <cmath>
+// File: src/NeuralNetwork/ActivationFunction.cpp
+// Purpose: Implementation file for ActivationFunction class.
 
 #include "NeuralNetwork/ActivationFunction.h"
-#include "NeuralNetwork/Matrix.h"
+
+#include <cmath> // exp
+
+#include "NeuralNetwork/Matrix.h" // nn::Matrix
 
 void nn::activation_functions::Sigmoid::activate(Matrix<float>& mat)
 {

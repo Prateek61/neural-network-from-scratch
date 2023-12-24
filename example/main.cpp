@@ -1,3 +1,6 @@
+// File: example/main.cpp
+// Purpose: Example file for NeuralNetwork Library.
+
 #include <iostream>
 
 #include <NeuralNetwork/NeuralNetwork.h>

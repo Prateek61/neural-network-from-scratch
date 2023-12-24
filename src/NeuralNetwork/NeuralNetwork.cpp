@@ -1,3 +1,6 @@
+// File: src/NeuralNetwork/NeuralNetwork.cpp
+// Purpose: Implementation file for NeuralNetwork class.
+
 #include "NeuralNetwork/NeuralNetwork.h"
 
 #include <fstream> // std::ofstream

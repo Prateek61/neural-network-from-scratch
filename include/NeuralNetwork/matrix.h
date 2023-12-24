@@ -1,4 +1,4 @@
-// File: include/Matrix.h
+// File: include/NeuralNetwork/Matrix.h
 // Purpose: Header file for Matrix.cpp.
 
 #pragma once
