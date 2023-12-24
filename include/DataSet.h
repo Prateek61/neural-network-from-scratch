@@ -33,14 +33,14 @@ namespace nn
 		/// </summary>
 		/// <param name="batch_size">Number of training data to return</param>
 		/// <returns>Training data</returns>
-		[[nodiscard]] virtual nn::Matrix<float>& get_batch_input(const size_t batch_size) = 0;
+		virtual nn::Matrix<float>& get_batch_input(const size_t batch_size) = 0;
 
 		/// <summary>
 		/// Gets the next batch of output of training data.
 		/// </summary>
 		/// <param name="batch_size">Number of data to return</param>
 		/// <returns>Output data</returns>
-		[[nodisacrd]] virtual nn::Matrix<float>& get_batch_output(const size_t batch_size) = 0;
+		virtual nn::Matrix<float>& get_batch_output(const size_t batch_size) = 0;
 
 		/// <summary>
 		/// Indicates whether the training set has reached the end.

@@ -6,17 +6,20 @@
 nn::Layer::Layer() = default;
 
 nn::Layer::Layer(const size_t neuron_count, const size_t batch_size)
+	: neuron_count_(0), batch_size_(0)
 {
 	this->initialize(neuron_count, batch_size);
 }
 
 nn::Layer::Layer(const size_t neuron_count, const size_t batch_size, const size_t previous_layer_neuron_count)
+	: neuron_count_(0), batch_size_(0)
 {
 	this->initialize(neuron_count, batch_size, previous_layer_neuron_count);
 }
 
 nn::Layer::Layer(const size_t neuron_count, const size_t batch_size, const size_t previous_layer_neuron_count,
                  std::unique_ptr<activation_functions::ActivationFunction> activation_function)
+	                 : neuron_count_(0), batch_size_(0)
 {
 	this->initialize(neuron_count, batch_size, previous_layer_neuron_count, std::move(activation_function));
 }
@@ -36,6 +39,8 @@ void nn::Layer::initialize(const size_t neuron_count, const size_t batch_size)
 
 	// Initialize the matrices.
 	this->activations_ = std::make_unique<Matrix<float>>(neuron_count, batch_size);
+	// Set the actication function to Sigmoid.
+	this->activation_function_ = std::make_unique<activation_functions::Sigmoid>();
 }
 
 void nn::Layer::initialize(const size_t neuron_count, const size_t batch_size, const size_t previous_layer_neuron_count)
@@ -247,6 +252,11 @@ size_t nn::Layer::get_neuron_count() const
 size_t nn::Layer::get_batch_size() const
 {
 	return this->batch_size_;
+}
+
+const nn::activation_functions::ActivationFunction* nn::Layer::get_activation_function() const
+{
+	return this->activation_function_.get();
 }
 
 const nn::Matrix<float>& nn::Layer::get_activations() const

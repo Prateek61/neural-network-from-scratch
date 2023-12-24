@@ -197,6 +197,11 @@ namespace nn
 		[[nodiscard]] size_t get_batch_size() const;
 
 		/// <summary>
+		/// Returns the activation function of this layer
+		/// </summary>
+		[[nodiscard]] const nn::activation_functions::ActivationFunction* get_activation_function() const;
+
+		/// <summary>
 		/// Returns the activation matrix of this layer
 		/// </summary>
 		[[nodiscard]] const Matrix<float>& get_activations() const;

@@ -10,6 +10,11 @@ namespace nn::activation_functions
 	{
 	public:
 		/// <summary>
+		/// Virtual destructor
+		/// </summary>
+		virtual ~ActivationFunction() = default;
+
+		/// <summary>
 		/// Performs the activation function on the input matrix
 		/// </summary>
 		/// <param name="mat">Input matrix</param>
@@ -69,6 +74,7 @@ namespace nn::activation_functions
 
 	class ReLU : public ActivationFunction
 	{
+		const std::string activation_function_name_ = "ReLU";
 	public:
 		/// <summary>
 		/// Performs the activation function on the input matrix

@@ -4,6 +4,7 @@
 #pragma once
 
 #include <stdexcept> // std::logic_error
+#include <iostream> // std::ostream
 
 namespace nn::utils
 {
@@ -118,6 +119,11 @@ namespace nn::utils
 		/// Returns the size of the memory.(number of elements)
 		/// </summary>
 		[[nodiscard]] size_t get_size() const;
+
+		/// <summary>
+		/// Overload of the << operator for printing the memory.
+		/// </summary>
+		friend std::ostream& operator<<(std::ostream& os, const AlignedMemoryAllocator<T, Alignment>& allocator);
 	};
 }
 
@@ -222,6 +228,18 @@ template<typename T, size_t Alignment>
 inline size_t nn::utils::AlignedMemoryAllocator<T, Alignment>::get_size() const
 {
 	return this->size_;
+}
+
+template <typename T, size_t Alignment>
+std::ostream& operator<<(std::ostream& os, const nn::utils::AlignedMemoryAllocator<T, Alignment>& allocator)
+{
+	// Loop through elements and print
+	for (size_t i = 0; i < allocator.size_; i++)
+	{
+		os << allocator.aligned_data_[i] << " ";
+	}
+
+	return os;
 }
 
 #pragma endregion

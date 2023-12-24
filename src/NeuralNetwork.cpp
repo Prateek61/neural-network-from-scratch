@@ -1,5 +1,7 @@
 #include "NeuralNetwork.h"
 
+#include <fstream> // std::ofstream
+
 nn::NeuralNetwork::NeuralNetwork()
 	: batch_size_(1), learning_rate_(0.01f)
 {}
@@ -70,7 +72,7 @@ void nn::NeuralNetwork::update_weights_and_biases()
 {
 	if (!this->is_ready())
 	{
-				throw std::runtime_error("Neural network is not ready to update weights and biases.");
+		throw std::runtime_error("Neural network is not ready to update weights and biases.");
 	}
 
 	// iterate through the layers except the first one
@@ -90,6 +92,44 @@ void nn::NeuralNetwork::train(const size_t epochs)
 			this->feed_forward();
 			this->back_propagate();
 			this->update_weights_and_biases();
+		}
+	}
+}
+
+void nn::NeuralNetwork::save_to_file(const std::string& file_name) const
+{
+	// Open file
+	std::ofstream file(file_name);
+	if (!file.is_open())
+	{
+		throw std::runtime_error("Could not open file.");
+	}
+
+	// Write general information
+	file << this->learning_rate_ << "\n";
+	// Write number of layers
+	file << this->layers_.size() << "\n";
+
+	// Write information for each layer
+	for (const auto& layer : this->layers_)
+	{
+		// Write number of neurons
+		file << layer->get_neuron_count() << "\n";
+		// Write the name of activation function class with RTTI
+		file << typeid(*layer->get_activation_function()).name() << "\n";
+
+		// Check if the layer is the first layer
+		if (layer == this->layers_.front())
+		{
+			// Write the input size
+			file << layer->get_neuron_count() << "\n";
+		}
+		else // Not the first layer
+		{
+			// Write dimensions of the weights matrix
+			file << layer->get_weights().get_rows() << " " << layer->get_weights().get_cols() << "\n";
+			// Write the weights matrix
+			file << layer->get_weights() << "\n";
 		}
 	}
 }
