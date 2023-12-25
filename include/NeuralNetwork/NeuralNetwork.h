@@ -105,7 +105,7 @@ namespace nn
 		/// Calculates the accuracy of the neural network.
 		/// </summary>
 		/// <returns>Accuracy of the neural network for the give data set</returns>
-		[[nodiscard]] float get_accuracy();
+		[[nodiscard]] float calculate_accuracy();
 
 		/// <summary>
 		/// Calculates the loss of the neural network for given data set.

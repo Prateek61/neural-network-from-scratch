@@ -6,11 +6,6 @@ project(NeuralNetwork LANGUAGES CXX)
 # Set the policy CMP0135 to use the new behavior for FetchContent
 cmake_policy(SET CMP0135 NEW)
 
-# Set the Build Type to Debug if not specified
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Debug")
-endif()
-
 # Set C++ Standard
 set(CMAKE_CXX_STANDARD 17)
 
