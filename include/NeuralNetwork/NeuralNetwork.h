@@ -97,6 +97,23 @@ namespace nn
 		void train(const size_t epochs);
 
 		/// <summary>
+		/// Trains the neural network for one epoch.
+		/// </summary>
+		void train_one_epoch();
+
+		/// <summary>
+		/// Calculates the accuracy of the neural network.
+		/// </summary>
+		/// <returns>Accuracy of the neural network for the give data set</returns>
+		[[nodiscard]] float calculate_accuracy();
+
+		/// <summary>
+		/// Calculates the loss of the neural network for given data set.
+		/// </summary>
+		/// <returns></returns>
+		[[nodiscard]] float get_loss();
+
+		/// <summary>
 		/// Saves the neural network to a file.
 		/// </summary>
 		/// <param name="file_name">Name of the file (relative to executable)</param>
@@ -123,7 +140,7 @@ namespace nn
 		/// Gets the data set of the neural network.
 		/// </summary>
 		/// <returns>DataSet Class the network is using</returns>
-		nn::DataSet& get_training_set();
+		nn::DataSet* get_data_set();
 
 		/// <summary>
 		/// Returns the layers of the neural network.

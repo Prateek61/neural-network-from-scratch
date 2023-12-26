@@ -62,7 +62,7 @@ void nn::Layer::initialize(const size_t neuron_count, const size_t batch_size, c
 	// Initialize the delta matrices
 	this->delta_activations_ = std::make_unique<Matrix<float>>(neuron_count, batch_size);
 	this->delta_weights_ = std::make_unique<Matrix<float>>(neuron_count, previous_layer_neuron_count);
-	this->biases_ = std::make_unique<Matrix<float>>(neuron_count, 1);
+	this->delta_biases_ = std::make_unique<Matrix<float>>(neuron_count, 1);
 	this->delta_sums_ = std::make_unique<Matrix<float>>(neuron_count, batch_size);
 
 	// Randomize the weights and biases
@@ -380,7 +380,7 @@ void nn::Layer::feed_forward(const Layer& previous_layer)
 	}
 
 	// Calculate the sums
-	this->sums_->calculate_sums_for_forward_propagation(*this->weights_, previous_layer.get_activations(), previous_layer.get_activations());
+	this->sums_->calculate_sums_for_forward_propagation(*this->weights_, *this->biases_, previous_layer.get_activations());
 	// Copy the sums to the activations matrix
 	this->activations_->operator=(*this->sums_);
 	// Apply the activation function to the activations matrix
@@ -410,7 +410,7 @@ void nn::Layer::back_propagate(const Layer& next_layer, const Layer& previous_la
 	this->delta_weights_->calculate_delta_weights_for_back_propagation(previous_layer.get_activations(), *this->delta_sums_);
 }
 
-void nn::Layer::back_propagate(const Matrix<float>& expected_activations)
+void nn::Layer::back_propagate(const Matrix<float>& expected_activations, const Layer& previous_layer)
 {
 // Check if this layer is initialized and is not the input layer
 	if (this->activations_ == nullptr || this->weights_ == nullptr)
@@ -430,7 +430,7 @@ void nn::Layer::back_propagate(const Matrix<float>& expected_activations)
 	this->delta_biases_->calculate_delta_biases_for_back_propagation(*this->delta_sums_);
 
 	// Calculate delta weights
-	this->delta_weights_->calculate_delta_weights_for_back_propagation(*this->activations_, *this->delta_sums_);
+	this->delta_weights_->calculate_delta_weights_for_back_propagation(*previous_layer.activations_, *this->delta_sums_);
 }
 
 void nn::Layer::update_weights_and_biases(const float learning_rate)
@@ -445,13 +445,13 @@ void nn::Layer::update_weights_and_biases(const float learning_rate)
 	this->weights_->perform_element_wise_operation(*this->delta_weights_,
 		[learning_rate](const float weight, const float delta_weight) -> float
 		{
-			return weight - learning_rate * delta_weight;
+			return weight - ( learning_rate * delta_weight );
 		}
 	);
 	this->biases_->perform_element_wise_operation(*this->delta_biases_,
 		[learning_rate](const float bias, const float delta_bias) -> float
 		{
-			return bias - learning_rate * delta_bias;
+			return bias - ( learning_rate * delta_bias );
 		}
 	);
 }

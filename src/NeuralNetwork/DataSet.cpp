@@ -12,3 +12,8 @@ size_t nn::DataSet::get_current_index() const
 {
 	return current_index_;
 }
+
+void nn::DataSet::go_to_next_batch()
+{
+	current_index_++;
+}

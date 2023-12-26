@@ -7,7 +7,8 @@
 
 nn::NeuralNetwork::NeuralNetwork()
 	: batch_size_(1), learning_rate_(0.01f)
-{}
+{
+}
 
 nn::NeuralNetwork::NeuralNetwork(const float learning_rate, const size_t batch_size)
 	: batch_size_(batch_size), learning_rate_(learning_rate)
@@ -24,12 +25,12 @@ void nn::NeuralNetwork::set_batch_size(const size_t batch_size)
 	batch_size_ = batch_size;
 }
 
-void nn::NeuralNetwork::set_data_set(std::unique_ptr<nn::DataSet> training_set)
+void nn::NeuralNetwork::set_data_set(std::unique_ptr<DataSet> training_set)
 {
 	data_set_ = std::move(training_set);
 }
 
-void nn::NeuralNetwork::add_layer(std::unique_ptr<nn::Layer> layer)
+void nn::NeuralNetwork::add_layer(std::unique_ptr<Layer> layer)
 {
 	layers_.push_back(std::move(layer));
 }
@@ -42,7 +43,7 @@ void nn::NeuralNetwork::feed_forward()
 	}
 
 	// first item of the list
-	this->layers_.front()->set_activations(this->data_set_->get_batch_input(this->batch_size_));
+	this->layers_.front()->set_activations(this->data_set_->get_batch_input());
 
 	// iterate through the layers except the first one
 	for (auto it = std::next(this->layers_.begin()); it != this->layers_.end(); ++it)
@@ -60,10 +61,12 @@ void nn::NeuralNetwork::back_propagate()
 	}
 
 	// last item of the list
-	this->layers_.back()->back_propagate(this->data_set_->get_batch_output(this->batch_size_));
+	auto last_layer = std::prev(this->layers_.end());
+	auto second_to_last_layer = std::prev(last_layer);
+	(*last_layer)->back_propagate(this->data_set_->get_batch_output(), *second_to_last_layer->get());
 
 	// iterate through the second to the last layer to the second layer
-	for (auto it = std::prev(this->layers_.end(), 2); it != std::next(this->layers_.begin()); --it)
+	for (auto it = std::prev(this->layers_.end(), 2); it != this->layers_.begin(); --it)
 	{
 		const auto next_layer = std::next(it);
 		const auto previous_layer = std::prev(it);
@@ -89,14 +92,88 @@ void nn::NeuralNetwork::train(const size_t epochs)
 {
 	for (size_t i = 0; i < epochs; ++i)
 	{
-		this->data_set_->reset();
-		while (!this->data_set_->is_end())
-		{
-			this->feed_forward();
-			this->back_propagate();
-			this->update_weights_and_biases();
-		}
+		train_one_epoch();
 	}
+}
+
+void nn::NeuralNetwork::train_one_epoch()
+{
+	this->data_set_->reset();
+	while (!this->data_set_->is_end())
+	{
+		this->feed_forward();
+		this->back_propagate();
+		this->update_weights_and_biases();
+
+		this->data_set_->go_to_next_batch();
+	}
+	this->data_set_->reset();
+}
+
+float nn::NeuralNetwork::calculate_accuracy()
+{
+	this->data_set_->reset();
+
+	size_t correct = 0;
+
+	while (!this->data_set_->is_end())
+	{
+		this->feed_forward();
+
+		auto activation_matrix = this->get_output();
+		auto expected_matrix = this->data_set_->get_batch_output();
+
+		for (size_t i = 0; i < activation_matrix.get_cols(); ++i)
+		{
+			size_t max_index = 0;
+			float max_value = activation_matrix(0, i);
+			for (size_t j = 1; j < activation_matrix.get_rows(); ++j)
+			{
+				if (activation_matrix(j, i) > max_value)
+				{
+					max_index = j;
+					max_value = activation_matrix(j, i);
+				}
+			}
+
+			if (expected_matrix(max_index, i) == 1.0f)
+			{
+				++correct;
+			}
+		}
+
+		this->data_set_->go_to_next_batch();
+	}
+
+	const auto accuracy = static_cast<float>(correct) / static_cast<float>(this->data_set_->get_total_size());
+	return accuracy;
+}
+
+float nn::NeuralNetwork::get_loss()
+{
+	float loss = 0.0f;
+
+	this->data_set_->reset();
+
+	while (!this->data_set_->is_end())
+	{
+		this->feed_forward();
+
+		auto activation_matrix = this->get_output();
+		auto expected_matrix = this->data_set_->get_batch_output();
+
+		for (size_t i = 0; i < activation_matrix.get_rows() * activation_matrix.get_cols(); ++i)
+		{
+			const auto temp = static_cast<float>(pow(activation_matrix[i] - expected_matrix[i], 2));
+			loss += temp * temp;
+		}
+		data_set_->go_to_next_batch();
+	}
+
+	this->data_set_->reset();
+
+	loss /= static_cast<float>(this->data_set_->get_total_size());
+	return loss;
 }
 
 void nn::NeuralNetwork::save_to_file(const std::string& file_name) const
@@ -150,7 +227,8 @@ bool nn::NeuralNetwork::is_ready() const
 		return false;
 	}
 	// Check if the layers are of valid size
-	if (this->layers_.front()->get_neuron_count() != this->data_set_->get_input_size() || this->layers_.back()->get_neuron_count() != this->data_set_->get_output_size())
+	if (this->layers_.front()->get_neuron_count() != this->data_set_->get_input_size() || this->layers_.back()->
+		get_neuron_count() != this->data_set_->get_output_size())
 	{
 		return false;
 	}
@@ -163,9 +241,9 @@ const nn::Matrix<float>& nn::NeuralNetwork::get_output() const
 	return this->layers_.back()->get_activations();
 }
 
-nn::DataSet& nn::NeuralNetwork::get_training_set()
+nn::DataSet* nn::NeuralNetwork::get_data_set()
 {
-	return *this->data_set_;
+	return this->data_set_.get();
 }
 
 std::list<std::unique_ptr<nn::Layer>>& nn::NeuralNetwork::get_layers()

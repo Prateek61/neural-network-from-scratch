@@ -51,6 +51,13 @@ namespace nn::activation_functions
 	{
 	public:
 		/// <summary>
+		/// Performs the activation function on the input value
+		/// </summary>
+		/// <param name="x">Input Value</param>
+		/// <returns>Value of the function</returns>
+		[[nodiscard]] static float activation_function(const float x);
+
+		/// <summary>
 		/// Performs the activation function on the input matrix
 		/// </summary>
 		/// <param name="mat">Input matrix</param>
