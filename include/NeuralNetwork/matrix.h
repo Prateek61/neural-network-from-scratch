@@ -13,7 +13,6 @@
 #include "NeuralNetwork/AlignedMemoryAllocator.h" // nn::utils::AlignedMemoryAllocator
 
 
-
 namespace nn
 {
 	/// <summary>
@@ -56,7 +55,7 @@ namespace nn
 		/// Constructor for a matrix of size rows x cols.
 		/// </summary>
 		/// <param name="data">2d vector representing the matrix</param>
-		explicit Matrix(const std::vector<std::vector<T>>& data);
+		Matrix(const std::vector<std::vector<T>>& data);
 
 		/// <summary>
 		/// Constructor for a matrix of size rows x cols.
@@ -231,7 +230,8 @@ namespace nn
 		/// </summary>
 		/// <param name="this_layer_activations">Activation matrix of this layer</param>
 		/// <param name="expected_output">Expected Output of the training session</param>
-		void calculate_delta_activation_from_expected_output(const Matrix<T>& this_layer_activations, const Matrix<T>& expected_output);
+		void calculate_delta_activation_from_expected_output(const Matrix<T>& this_layer_activations,
+		                                                     const Matrix<T>& expected_output);
 	};
 }
 
@@ -291,8 +291,8 @@ nn::Matrix<T>::Matrix(const Matrix<T>& other)
 	this->allocator_.copy_data(other.allocator_);
 }
 
-template<typename T>
-inline nn::Matrix<T>& nn::Matrix<T>::operator=(const Matrix<T>& other)
+template <typename T>
+nn::Matrix<T>& nn::Matrix<T>::operator=(const Matrix<T>& other)
 {
 	// Check if the matrix is initialized.
 	if (this->get_rows() == 0 || this->get_cols() == 0 || !this->allocator_.is_initialized())
@@ -300,7 +300,7 @@ inline nn::Matrix<T>& nn::Matrix<T>::operator=(const Matrix<T>& other)
 		throw std::runtime_error("Cannot copy to an uninitialized matrix.");
 	}
 	// Check if the dimensions are compatible
-    if (this->get_rows() != other.get_rows() || this->get_cols() != other.get_cols())
+	if (this->get_rows() != other.get_rows() || this->get_cols() != other.get_cols())
 	{
 		throw std::runtime_error("Cannot copy matrices with incompatible dimensions.");
 	}
@@ -431,8 +431,8 @@ void nn::Matrix<T>::multiply(const Matrix<T>& matrix1, const Matrix<T>& matrix2)
 	Matrix<T>::multiply(matrix1, matrix2, *this);
 }
 
-template<typename T>
-inline void nn::Matrix<T>::hadamard_product(const Matrix<T>& other)
+template <typename T>
+void nn::Matrix<T>::hadamard_product(const Matrix<T>& other)
 {
 	this->perform_element_wise_operation(other, [](const T& value1, const T& value2) -> T
 	{
@@ -499,8 +499,9 @@ nn::Matrix<T> nn::Matrix<T>::transpose() const
 	return result;
 }
 
-template<typename T>
-inline void nn::Matrix<T>::calculate_sums_for_forward_propagation(const Matrix<T>& weights, const Matrix<T>& biases, const Matrix<T>& input)
+template <typename T>
+void nn::Matrix<T>::calculate_sums_for_forward_propagation(const Matrix<T>& weights, const Matrix<T>& biases,
+                                                           const Matrix<T>& input)
 {
 	// Check if dimensions are compatible.
 	if (biases.get_rows() != this->get_rows() || biases.get_cols() != 1)
@@ -519,8 +520,9 @@ inline void nn::Matrix<T>::calculate_sums_for_forward_propagation(const Matrix<T
 	}
 }
 
-template<typename T>
-inline void nn::Matrix<T>::calculate_delta_activation_for_back_propagation(const Matrix<T>& next_layer_weights, const Matrix<T>& next_layer_delta_sums)
+template <typename T>
+void nn::Matrix<T>::calculate_delta_activation_for_back_propagation(const Matrix<T>& next_layer_weights,
+                                                                    const Matrix<T>& next_layer_delta_sums)
 {
 	// Transpose the weights matrix.
 	const auto transpose_next_layer_weights = next_layer_weights.transpose();
@@ -528,8 +530,8 @@ inline void nn::Matrix<T>::calculate_delta_activation_for_back_propagation(const
 	this->multiply(transpose_next_layer_weights, next_layer_delta_sums);
 }
 
-template<typename T>
-inline void nn::Matrix<T>::calculate_delta_biases_for_back_propagation(const Matrix<T>& this_layer_delta_sums)
+template <typename T>
+void nn::Matrix<T>::calculate_delta_biases_for_back_propagation(const Matrix<T>& this_layer_delta_sums)
 {
 	// Check if dimensions are compatible.
 	if (this->get_cols() != 1 || this->get_rows() != this_layer_delta_sums.get_rows())
@@ -549,8 +551,9 @@ inline void nn::Matrix<T>::calculate_delta_biases_for_back_propagation(const Mat
 	}
 }
 
-template<typename T>
-inline void nn::Matrix<T>::calculate_delta_weights_for_back_propagation(const Matrix<T>& previous_layer_activations, const Matrix<T>& this_layer_delta_sums)
+template <typename T>
+void nn::Matrix<T>::calculate_delta_weights_for_back_propagation(const Matrix<T>& previous_layer_activations,
+                                                                 const Matrix<T>& this_layer_delta_sums)
 {
 	const auto transpose_previous_layer_activation = previous_layer_activations.transpose();
 
@@ -563,8 +566,9 @@ inline void nn::Matrix<T>::calculate_delta_weights_for_back_propagation(const Ma
 	});
 }
 
-template<typename T>
-inline void nn::Matrix<T>::calculate_delta_activation_from_expected_output(const Matrix<T>& this_layer_activations, const Matrix<T>& expected_output)
+template <typename T>
+void nn::Matrix<T>::calculate_delta_activation_from_expected_output(const Matrix<T>& this_layer_activations,
+                                                                    const Matrix<T>& expected_output)
 {
 	*this = this_layer_activations;
 
@@ -592,4 +596,9 @@ std::ostream& operator<<(std::ostream& os, const nn::Matrix<T>& matrix)
 
 	return os;
 }
+#pragma endregion
+
+
+#pragma region Float Specialization
+
 #pragma endregion

@@ -65,14 +65,8 @@ void nn::NeuralNetwork::back_propagate()
 	auto second_to_last_layer = std::prev(last_layer);
 	(*last_layer)->back_propagate(this->data_set_->get_batch_output(), *second_to_last_layer->get());
 
-	// Check if second to the last layer is the first layer
-	if (second_to_last_layer == this->layers_.begin())
-	{
-				return;
-	}
-
 	// iterate through the second to the last layer to the second layer
-	for (auto it = std::prev(this->layers_.end(), 2); it != std::next(this->layers_.begin()); --it)
+	for (auto it = std::prev(this->layers_.end(), 2); it != this->layers_.begin(); --it)
 	{
 		const auto next_layer = std::next(it);
 		const auto previous_layer = std::prev(it);
@@ -170,7 +164,7 @@ float nn::NeuralNetwork::get_loss()
 
 		for (size_t i = 0; i < activation_matrix.get_rows() * activation_matrix.get_cols(); ++i)
 		{
-			const float temp = abs(activation_matrix[i] - expected_matrix[i]);
+			const auto temp = static_cast<float>(pow(activation_matrix[i] - expected_matrix[i], 2));
 			loss += temp * temp;
 		}
 		data_set_->go_to_next_batch();
@@ -247,9 +241,9 @@ const nn::Matrix<float>& nn::NeuralNetwork::get_output() const
 	return this->layers_.back()->get_activations();
 }
 
-nn::DataSet& nn::NeuralNetwork::get_training_set()
+nn::DataSet* nn::NeuralNetwork::get_data_set()
 {
-	return *this->data_set_;
+	return this->data_set_.get();
 }
 
 std::list<std::unique_ptr<nn::Layer>>& nn::NeuralNetwork::get_layers()
