@@ -23,13 +23,13 @@ int main()
 	auto layer2 = std::make_unique<nn::Layer>(16, batch_size, 784);
 	layer2->set_activation_function(std::make_unique<nn::activation_functions::Sigmoid>());
 	auto layer3 = std::make_unique<nn::Layer>(16, batch_size, 16);
-	auto layer4 = std::make_unique<nn::Layer>(10, batch_size, 784);
+	auto layer4 = std::make_unique<nn::Layer>(10, batch_size, 16);
 
 	std::cout << "Initialized\n";
 
 	nn.add_layer(std::move(layer1));
-	// nn.add_layer(std::move(layer2));
-	// nn.add_layer(std::move(layer3));
+	nn.add_layer(std::move(layer2));
+	nn.add_layer(std::move(layer3));
 	nn.add_layer(std::move(layer4));
 
 	std::cout << "Network is setup\n";
