@@ -140,7 +140,7 @@ namespace nn
 		/// Gets the data set of the neural network.
 		/// </summary>
 		/// <returns>DataSet Class the network is using</returns>
-		nn::DataSet& get_training_set();
+		nn::DataSet* get_data_set();
 
 		/// <summary>
 		/// Returns the layers of the neural network.
