@@ -264,7 +264,6 @@ namespace nn
 		/// Runs back propagation on this layer with the given expected activations
 		/// </summary>
 		/// <param name="expected_activations">Expected output of the network</param>
-		/// <param name="previous_layer">Previous Layer</param>
 		void back_propagate(const Matrix<float>& expected_activations, const Layer& previous_layer);
 
 		/// <summary>

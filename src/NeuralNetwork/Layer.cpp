@@ -445,13 +445,13 @@ void nn::Layer::update_weights_and_biases(const float learning_rate)
 	this->weights_->perform_element_wise_operation(*this->delta_weights_,
 		[learning_rate](const float weight, const float delta_weight) -> float
 		{
-			return weight - ( learning_rate * delta_weight );
+			return weight - learning_rate * delta_weight;
 		}
 	);
 	this->biases_->perform_element_wise_operation(*this->delta_biases_,
 		[learning_rate](const float bias, const float delta_bias) -> float
 		{
-			return bias - ( learning_rate * delta_bias );
+			return bias - learning_rate * delta_bias;
 		}
 	);
 }

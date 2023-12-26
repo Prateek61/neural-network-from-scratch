@@ -42,26 +42,6 @@ add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${INCLUDE_FILES})
 # Add Include Directory
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIR})
 
-# If the compiler is mingw
-if (MINGW)
-    # If build type is not set, set to release
-    if (NOT CMAKE_BUILD_TYPE)
-        set(CMAKE_BUILD_TYPE Release)
-    endif()
-
-    # If build type is release
-    if (CMAKE_BUILD_TYPE STREQUAL "Release")
-        # Set the flags for release
-        set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
-    endif()
-
-    # If build type is debug
-    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-        # Set debug flags
-        set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wextra -pedantic -O0")
-    endif()
-endif()
-
 # Check if BUILD_TESTS is enabled
 option(BUILD_TESTS "Build the tests" OFF)
 # Check if BUILD_EXAMPLES is enabled

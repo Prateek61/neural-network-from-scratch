@@ -7,11 +7,6 @@
 
 #include "NeuralNetwork/Matrix.h" // nn::Matrix
 
-float nn::activation_functions::Sigmoid::activation_function(const float x)
-{
-	return 1 / (1 + exp(-x));
-}
-
 void nn::activation_functions::Sigmoid::activate(Matrix<float>& mat)
 {
 	mat.perform_element_wise_operation([](const float x) -> float
@@ -32,7 +27,7 @@ void nn::activation_functions::Sigmoid::derivative(Matrix<float>& mat)
 {
 	mat.perform_element_wise_operation([](const float x) -> float
 	{
-		return Sigmoid::activation_function(x) * (1 - Sigmoid::activation_function(x));
+		return (1 / (1 + exp(-x))) * (1 - 1 / (1 + exp(-x)));
 	});
 }
 
@@ -40,7 +35,7 @@ void nn::activation_functions::Sigmoid::derivative(Matrix<double>& mat)
 {
 	mat.perform_element_wise_operation([](const double x) -> double
 	{
-		return Sigmoid::activation_function(x) * (1 - Sigmoid::activation_function(x));
+		return (1 / (1 + exp(-x))) * (1 - 1 / (1 + exp(-x)));
 	});
 }
 
