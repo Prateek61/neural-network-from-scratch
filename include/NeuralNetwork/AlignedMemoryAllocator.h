@@ -119,11 +119,6 @@ namespace nn::utils
 		/// Returns the size of the memory.(number of elements)
 		/// </summary>
 		[[nodiscard]] size_t get_size() const;
-
-		/// <summary>
-		/// Overload of the << operator for printing the memory.
-		/// </summary>
-		friend std::ostream& operator<<(std::ostream& os, const AlignedMemoryAllocator<T, Alignment>& allocator);
 	};
 }
 

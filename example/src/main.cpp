@@ -8,11 +8,11 @@
 #include <NeuralNetwork/NeuralNetwork.h>
 #include <NeuralNetwork/ActivationFunction.h>
 
-int main()
+void train_and_test()
 {
-	constexpr int batch_size = 1;
-    constexpr int num_epochs = 10;
-    constexpr float learning_rate = 1.0f;
+	constexpr int batch_size = 30;
+    constexpr int num_epochs = 1;
+    constexpr float learning_rate = 0.1f;
     constexpr int print_every = 1;
 
 	nn::NeuralNetwork nn(0.01f, batch_size);
@@ -70,6 +70,63 @@ int main()
     nn.set_data_set(std::move(test_set));
     std::cout << "Loss: " << nn.get_loss() << '\n';
     std::cout << "Accuracy: " << nn.calculate_accuracy() << '\n';
+}
+
+void profile_time()
+{
+	// Setup variables
+	constexpr int batch_size = 1000;
+	constexpr int num_batch = 10;
+	constexpr float learning_rate = 1.0f;
+
+	// Setup network and train set
+	nn::NeuralNetwork nn(0.01f, batch_size);
+	auto train_set = std::make_unique<TrainSet>("dataset/train-images.idx3-ubyte", "dataset/train-labels.idx1-ubyte");
+	train_set->initialize(batch_size);
+	nn.set_data_set(std::move(train_set));
+
+	// Setup and add layers
+	auto layer1 = std::make_unique<nn::Layer>(784, batch_size);
+	auto layer2 = std::make_unique<nn::Layer>(16, batch_size, 784);
+	auto layer3 = std::make_unique<nn::Layer>(16, batch_size, 16);
+	auto final_layer = std::make_unique<nn::Layer>(10, batch_size, 16);
+	nn.add_layer(std::move(layer1));
+	nn.add_layer(std::move(layer2));
+	nn.add_layer(std::move(layer3));
+	nn.add_layer(std::move(final_layer));
+
+	std::cout << "Initialized\n";
+
+	// Start clock
+	const auto start = std::chrono::high_resolution_clock::now();
+
+	if (!nn.is_ready())
+	{
+		std::cout << "Neural network is not ready.\n";
+		return;
+	}
+
+	for (int i = 0; i < num_batch; ++i)
+	{
+		nn.feed_forward();
+		nn.back_propagate();
+		nn.update_weights_and_biases();
+
+		nn.get_data_set()->go_to_next_batch();
+	}
+
+	const auto end = std::chrono::high_resolution_clock::now();
+	std::cout << "Time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms\n";
+}
+
+void test()
+{
+	
+}
+
+int main()
+{
+	train_and_test();
 
 	return 0;
 }
