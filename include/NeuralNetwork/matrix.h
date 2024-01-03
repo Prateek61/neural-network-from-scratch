@@ -9,11 +9,12 @@
 #include <vector>	 // std::vector
 #include <iostream> // std::ostream
 
-// Check if intrinsics are supported.
-#if defined(__AVX2__) || defined(__AVX__)
+// Check if Intel MKL is available.
+#if defined(__has_include) && __has_include(<mkl.h>)
+#include <mkl.h>
+#else defined(__AVX2__) || defined(__AVX__)
 #include <immintrin.h>
 #endif
-
 
 #include "NeuralNetwork/AlignedMemoryAllocator.h" // nn::utils::AlignedMemoryAllocator
 
@@ -42,6 +43,11 @@ namespace nn
 		/// Aligned memory allocator to allocate memory for elements in the matrix.
 		/// </summary>
 		utils::AlignedMemoryAllocator<T, 64> allocator_;
+
+		/// <summary>
+		/// Pointer to the matrix data.
+		/// </summary>
+		T* data_;
 
 	public:
 		/// <summary>
@@ -248,21 +254,21 @@ namespace nn
 #pragma region Implementation
 template <typename T>
 nn::Matrix<T>::Matrix()
-	: rows_(0), cols_(0)
+	: rows_(0), cols_(0), data_(nullptr)
 {
 }
 
 
 template <typename T>
 nn::Matrix<T>::Matrix(const size_t rows, const size_t cols)
-	: rows_(0), cols_(0)
+	: rows_(0), cols_(0), data_(nullptr)
 {
 	this->init(rows, cols);
 }
 
 template <typename T>
 nn::Matrix<T>::Matrix(const std::vector<std::vector<T>>& data)
-	: rows_(0), cols_(0)
+	: rows_(0), cols_(0), data_(nullptr)
 {
 	// Initializes the matrix with the size of the data.
 	this->init(data.size(), data[0].size());
@@ -279,7 +285,7 @@ nn::Matrix<T>::Matrix(const std::vector<std::vector<T>>& data)
 
 template <typename T>
 nn::Matrix<T>::Matrix(const std::vector<T>& data, const size_t rows, const size_t cols)
-	: rows_(0), cols_(0)
+	: rows_(0), cols_(0), data_(nullptr)
 {
 	// Initializes the matrix with the size of the data.
 	this->init(rows, cols);
@@ -293,7 +299,7 @@ nn::Matrix<T>::Matrix(const std::vector<T>& data, const size_t rows, const size_
 
 template <typename T>
 nn::Matrix<T>::Matrix(const Matrix<T>& other)
-	: rows_(0), cols_(0)
+	: rows_(0), cols_(0), data_(nullptr)
 {
 	this->init(other.get_rows(), other.get_cols());
 
@@ -322,49 +328,49 @@ nn::Matrix<T>& nn::Matrix<T>::operator=(const Matrix<T>& other)
 template <typename T>
 T& nn::Matrix<T>::operator()(const size_t row, const size_t col)
 {
-	return this->allocator_.get()[row * this->cols_ + col];
+	return this->data_[row * this->cols_ + col];
 }
 
 template <typename T>
 const T& nn::Matrix<T>::operator()(const size_t row, const size_t col) const
 {
-	return this->allocator_.get()[row * this->cols_ + col];
+	return this->data_[row * this->cols_ + col];
 }
 
 template <typename T>
 T& nn::Matrix<T>::operator[](const size_t index)
 {
-	return this->allocator_.get()[index];
+	return this->data_[index];
 }
 
 template <typename T>
 const T& nn::Matrix<T>::operator[](const size_t index) const
 {
-	return this->allocator_.get()[index];
+	return this->data_[index];
 }
 
 template <typename T>
 T nn::Matrix<T>::at(const size_t row, const size_t col) const
 {
-	return this->allocator_.get()[row * this->cols_ + col];
+	return this->data_[row * this->cols_ + col];
 }
 
 template <typename T>
 T nn::Matrix<T>::at(const size_t index) const
 {
-	return this->allocator_.get()[index];
+	return this->data_[index];
 }
 
 template <typename T>
 T* nn::Matrix<T>::get_data()
 {
-	return this->allocator_.get();
+	return this->data_;
 }
 
 template <typename T>
 const T* nn::Matrix<T>::get_data() const
 {
-	return this->allocator_.get();
+	return this->data_;
 }
 
 template <typename T>
@@ -383,6 +389,7 @@ template <typename T>
 void nn::Matrix<T>::clear()
 {
 	this->allocator_.delete_data();
+	this->data_ = nullptr;
 	this->rows_ = 0;
 	this->cols_ = 0;
 }
@@ -403,6 +410,7 @@ void nn::Matrix<T>::init(const size_t rows, const size_t cols)
 	}
 
 	this->allocator_.init(rows * cols);
+	this->data_ = this->allocator_.get();
 	this->rows_ = rows;
 	this->cols_ = cols;
 }
@@ -423,7 +431,8 @@ void nn::Matrix<T>::multiply(const Matrix<T>& matrix1, const Matrix<T>& matrix2,
 		{
 			for (size_t j = 0; j < matrix2.get_cols(); j++)
 			{
-				result(i, j) += matrix1.at(i, k) * matrix2.at(k, j);
+				result.data_[i * result.cols_ + j] += matrix1.data_[i * matrix1.cols_ + k] * matrix2.data_[k * matrix2.
+					cols_ + j];
 			}
 		}
 	}
@@ -441,8 +450,8 @@ void nn::Matrix<T>::multiply(const Matrix<T>& matrix1, const Matrix<T>& matrix2)
 	Matrix<T>::multiply(matrix1, matrix2, *this);
 }
 
-template<typename T>
-inline void nn::Matrix<T>::multiply_without_avx(const Matrix<T>& matrix1, const Matrix<T>& matrix2, Matrix<T>& result)
+template <typename T>
+void nn::Matrix<T>::multiply_without_avx(const Matrix<T>& matrix1, const Matrix<T>& matrix2, Matrix<T>& result)
 {
 	// Initialize the result matrix to default values.
 	for (size_t i = 0; i < result.rows_ * result.cols_; i++)
@@ -632,34 +641,31 @@ std::ostream& operator<<(std::ostream& os, const nn::Matrix<T>& matrix)
 
 
 #pragma region Float Specialization
-// Check if intrinsics are supported.
-#if defined(__AVX2__) || defined(__AVX__)
-//#if 0
-inline float sum8(const __m256& x) {
-	// hiQuad = ( x7, x6, x5, x4 )
-	const __m128 hiQuad = _mm256_extractf128_ps(x, 1);
-	// loQuad = ( x3, x2, x1, x0 )
-	const __m128 loQuad = _mm256_castps256_ps128(x);
-	// sumQuad = ( x3 + x7, x2 + x6, x1 + x5, x0 + x4 )
-	const __m128 sumQuad = _mm_add_ps(loQuad, hiQuad);
-	// loDual = ( -, -, x1 + x5, x0 + x4 )
-	const __m128 loDual = sumQuad;
-	// hiDual = ( -, -, x3 + x7, x2 + x6 )
-	const __m128 hiDual = _mm_movehl_ps(sumQuad, sumQuad);
-	// sumDual = ( -, -, x1 + x3 + x5 + x7, x0 + x2 + x4 + x6 )
-	const __m128 sumDual = _mm_add_ps(loDual, hiDual);
-	// lo = ( -, -, -, x0 + x2 + x4 + x6 )
-	const __m128 lo = sumDual;
-	// hi = ( -, -, -, x1 + x3 + x5 + x7 )
-	const __m128 hi = _mm_shuffle_ps(sumDual, sumDual, 0x1);
-	// sum = ( -, -, -, x0 + x1 + x2 + x3 + x4 + x5 + x6 + x7 )
-	const __m128 sum = _mm_add_ss(lo, hi);
-	return _mm_cvtss_f32(sum);
-}
+
+// Check if Intel MKL is available.
+#if defined(__has_include) && __has_include(<mkl.h>)
 
 template <>
 inline void nn::Matrix<float>::multiply(const Matrix<float>& matrix1, const Matrix<float>& matrix2,
-                                        Matrix<float>& result)
+	Matrix<float>& result)
+{
+	// Initialize the result matrix to zero using MKL.
+	for (size_t i = 0; i < result.rows_ * result.cols_; ++i)
+	{
+				result[i] = 0.0f;
+	}
+
+	// Perform matrix multiplication using MKL.
+	cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, static_cast<int>(matrix1.get_rows()), static_cast<int>(matrix2.get_cols()), static_cast<int>(matrix1.get_cols()),
+				1.0f, matrix1.get_data(), static_cast<int>(matrix1.get_cols()), matrix2.get_data(), static_cast<int>(matrix2.get_cols()), 1.0f, result.get_data(),
+		static_cast<int>(result.get_cols()));
+}
+
+#else defined(__AVX2__) || defined(__AVX__)
+
+template <>
+inline void nn::Matrix<float>::multiply(const Matrix<float>& matrix1, const Matrix<float>& matrix2,
+	Matrix<float>& result)
 {
 	// Initialize the result matrix to zero using intrinsics but data may not always be multiple of 8.
 	for (size_t i = 0; i < (result.rows_ * result.cols_) / 8; ++i)
@@ -671,46 +677,24 @@ inline void nn::Matrix<float>::multiply(const Matrix<float>& matrix1, const Matr
 		result[i] = 0.0f;
 	}
 
-	// Transpose the second matrix.
-	const auto transpose_matrix2 = matrix2.transpose();
-
 	// Perform matrix multiplication using intrinsics.
-	for (size_t m1_row = 0; m1_row < matrix1.get_rows(); ++m1_row)
+	for (size_t i = 0; i < matrix1.get_rows(); ++i)
 	{
-		const auto m1_row_offset = m1_row * matrix1.get_cols();
-		for (size_t m2_t_row = 0; m2_t_row < transpose_matrix2.get_rows(); ++m2_t_row)
+		for (size_t k = 0; k < matrix1.get_cols(); ++k)
 		{
-			const auto m2_t_row_offset = m2_t_row * transpose_matrix2.get_cols();
-			for (size_t cols = 0; cols < matrix1.get_cols() / 8; cols++)
+			for (size_t j = 0; j < (matrix2.get_cols() / 8) * 8; j += 8)
 			{
-				// Load 8 elements from matrix1 and transpose_matrix2.
-				const __m256 m1_row_cols = _mm256_load_ps(matrix1.get_data() + m1_row_offset + cols * 8);
-				const __m256 m2_t_row_cols = _mm256_load_ps(transpose_matrix2.get_data() + m2_t_row_offset + cols * 8);
-
-				// Perform element wise multiplication.
-				const __m256 mul = _mm256_mul_ps(m1_row_cols, m2_t_row_cols);
-				// Accumulate the values in mul.
-				result(m1_row, m2_t_row) += sum8(mul);
-				
+				const __m256 m1_vec = _mm256_set1_ps(matrix1.data_[i * matrix1.cols_ + k]);
+				const __m256 m2_vec = _mm256_load_ps(matrix2.data_ + k * matrix2.cols_ + j);
+				const __m256 m3_vec = _mm256_load_ps(result.data_ + i * result.cols_ + j);
+				_mm256_store_ps(result.data_ + i * result.cols_ + j, _mm256_fmadd_ps(m1_vec, m2_vec, m3_vec));
 			}
-			for (size_t cols = matrix1.get_cols() / 8 * 8; cols < matrix1.get_cols(); cols++)
+			for (size_t j = (matrix2.get_cols() / 8) * 8; j < matrix2.get_cols(); ++j)
 			{
-				result(m1_row, m2_t_row) += matrix1.at(m1_row, cols) * transpose_matrix2.at(m2_t_row, cols);
+				result.data_[i * result.cols_ + j] += matrix1.data_[i * matrix1.cols_ + k] * matrix2.data_[k * matrix2.cols_ + j];
 			}
 		}
 	}
-}
-
-template <>
-inline void nn::Matrix<float>::multiply(const Matrix<float>& matrix1, const Matrix<float>& matrix2)
-{
-	if (matrix1.get_cols() != matrix2.get_rows() || this->get_rows() != matrix1.get_rows() || this->get_cols() !=
-		matrix2.get_cols())
-	{
-		throw std::runtime_error("Cannot multiply matrices with incompatible dimensions.");
-	}
-
-	multiply(matrix1, matrix2, *this);
 }
 
 #endif

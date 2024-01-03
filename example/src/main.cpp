@@ -11,8 +11,8 @@
 void train_and_test()
 {
 	constexpr int batch_size = 30;
-    constexpr int num_epochs = 3;
-    constexpr float learning_rate = 0.1f;
+    constexpr int num_epochs = 60;
+    constexpr float learning_rate = 0.4f;
     constexpr int print_every = 1;
 
 	nn::NeuralNetwork nn(0.01f, batch_size);
@@ -129,15 +129,22 @@ void test_speed()
 	mat2.randomize(0, 100);
 	nn::Matrix<float> res(mat_size, mat_size);
 
+	std::cout << "Initialized\n";
+
 	const auto start = std::chrono::high_resolution_clock::now();
 	nn::Matrix<float>::multiply(mat1, mat2, res);
 	const auto end = std::chrono::high_resolution_clock::now();
-	std::cout << "Time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms\n";
+	std::cout << "Time (AVX): " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms\n";
+
+	const auto start2 = std::chrono::high_resolution_clock::now();
+	nn::Matrix<float>::multiply_without_avx(mat1, mat2, res);
+	const auto end2 = std::chrono::high_resolution_clock::now();
+	std::cout << "Time (No AVX): " << std::chrono::duration_cast<std::chrono::milliseconds>(end2 - start2).count() << "ms\n";
 }
 
 int main()
 {
-	test_speed();
+	train_and_test();
 
 	return 0;
 }

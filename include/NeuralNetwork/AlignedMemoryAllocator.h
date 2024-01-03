@@ -155,8 +155,14 @@ void nn::utils::AlignedMemoryAllocator<T, Alignment>::init(const size_t size)
 
 	this->initialized_ = true;
 	this->size_ = size;
+
+#ifdef _WIN32
+	this->data_ = static_cast<T*>(_aligned_malloc(size * sizeof(T), Alignment));
+	this->aligned_data_ = this->data_;
+#else
 	this->data_ = new T[size];
 	this->aligned_data_ = this->data_;
+#endif
 }
 
 template <typename T, size_t Alignment>
@@ -165,9 +171,15 @@ void nn::utils::AlignedMemoryAllocator<T, Alignment>::delete_data()
 	this->initialized_ = false;
 	this->size_ = 0;
 
+
+
 	if (this->data_)
 	{
-		delete this->data_;
+#ifdef _WIN32
+		_aligned_free(this->data_);
+#else
+		delete[] this->data_;
+#endif
 	}
 
 	this->data_ = nullptr;

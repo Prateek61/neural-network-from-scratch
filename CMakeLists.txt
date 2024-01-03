@@ -59,6 +59,29 @@ add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${INCLUDE_FILES})
 # Add Include Directory
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIR})
 
+# Check if USE_MKL is enabled
+option(USE_MKL "Build the Intel Maths Kernal Library" OFF)
+
+# If Windows and Intel MKL is enabled
+if(WIN32 AND USE_MKL)
+    # Link Intel MKL
+    # Set the MKLROOT environment variable to the root of the MKL installation
+    set(MKLROOT "C:/Program Files (x86)/Intel/oneApi/mkl/latest")
+    set(MKL_INCLUDE_DIR "${MKLROOT}/include")
+    set(MKL_LIB_DIR "${MKLROOT}/lib")
+    set(MKL_LIBRARIES
+        "${MKL_LIB_DIR}/mkl_core.lib"
+        "${MKL_LIB_DIR}/mkl_intel_lp64.lib"
+        "${MKL_LIB_DIR}/mkl_sequential.lib"
+    )
+
+    include_directories(${MKL_INCLUDE_DIR})
+    link_directories(${MKL_LIB_DIR})
+
+    # Link Intel MKL
+    link_libraries(${MKL_LIBRARIES})
+endif()
+
 # If the compiler is mingw
 if(MINGW)
     # If build type is not set, set to release
