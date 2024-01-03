@@ -11,7 +11,7 @@
 void train_and_test()
 {
 	constexpr int batch_size = 30;
-    constexpr int num_epochs = 1;
+    constexpr int num_epochs = 3;
     constexpr float learning_rate = 0.1f;
     constexpr int print_every = 1;
 
@@ -119,14 +119,25 @@ void profile_time()
 	std::cout << "Time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms\n";
 }
 
-void test()
+void test_speed()
 {
-	
+	constexpr int mat_size = 1000;
+
+	nn::Matrix<float> mat1(mat_size, mat_size);
+	nn::Matrix<float> mat2(mat_size, mat_size);
+	mat1.randomize(0, 100);
+	mat2.randomize(0, 100);
+	nn::Matrix<float> res(mat_size, mat_size);
+
+	const auto start = std::chrono::high_resolution_clock::now();
+	nn::Matrix<float>::multiply(mat1, mat2, res);
+	const auto end = std::chrono::high_resolution_clock::now();
+	std::cout << "Time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms\n";
 }
 
 int main()
 {
-	train_and_test();
+	test_speed();
 
 	return 0;
 }

@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Set Source Directory
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/NeuralNetwork)
+
 # Set Include Directory
 set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
@@ -26,6 +27,7 @@ set(SOURCE_FILES
     ${SOURCE_DIR}/NeuralNetwork.cpp
     ${SOURCE_DIR}/DataSet.cpp
 )
+
 # Set Include Files
 set(INCLUDE_FILES
     ${INCLUDE_DIR_INCLUDES}/AlignedMemoryAllocator.h
@@ -36,6 +38,21 @@ set(INCLUDE_FILES
     ${INCLUDE_DIR_INCLUDES}/DataSet.h
 )
 
+# If the compiler is MSVC
+if(MSVC)
+    # Enable AVX2 Intrinsics
+    add_compile_options(/arch:AVX2)
+else()
+    # Enable Intrinsics if supported
+    include(CheckCXXCompilerFlag)
+    CHECK_CXX_COMPILER_FLAG("-mavx2" COMPILER_SUPPORTS_AVX2)
+    CHECK_CXX_COMPILER_FLAG("-mfma" COMPILER_SUPPORTS_FMA)
+
+    if(COMPILER_SUPPORTS_AVX2 AND COMPILER_SUPPORTS_FMA)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2 -mfma")
+    endif()
+endif()
+
 # Create the Library
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${INCLUDE_FILES})
 
@@ -43,20 +60,20 @@ add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${INCLUDE_FILES})
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIR})
 
 # If the compiler is mingw
-if (MINGW)
+if(MINGW)
     # If build type is not set, set to release
-    if (NOT CMAKE_BUILD_TYPE)
+    if(NOT CMAKE_BUILD_TYPE)
         set(CMAKE_BUILD_TYPE Release)
     endif()
 
     # If build type is release
-    if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    if(CMAKE_BUILD_TYPE STREQUAL "Release")
         # Set the flags for release
         set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
     endif()
 
     # If build type is debug
-    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         # Set debug flags
         set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wextra -pedantic -O0")
     endif()
@@ -64,10 +81,11 @@ endif()
 
 # Check if BUILD_TESTS is enabled
 option(BUILD_TESTS "Build the tests" OFF)
+
 # Check if BUILD_EXAMPLES is enabled
 option(BUILD_EXAMPLE "Build the examples" OFF)
 
-if (BUILD_TESTS)
+if(BUILD_TESTS)
     # Add Subdirectory for Tests
     add_subdirectory(test)
 
@@ -80,7 +98,7 @@ if (BUILD_TESTS)
     )
 endif()
 
-if (BUILD_EXAMPLE)
+if(BUILD_EXAMPLE)
     # Add Subdirectory for Example
     add_subdirectory(example)
 

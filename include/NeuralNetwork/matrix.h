@@ -8,7 +8,12 @@
 #include <stdexcept> // std::runtime_error
 #include <vector>	 // std::vector
 #include <iostream> // std::ostream
-#include <chrono> // std::chrono
+
+// Check if intrinsics are supported.
+#if defined(__AVX2__) || defined(__AVX__)
+#include <immintrin.h>
+#endif
+
 
 #include "NeuralNetwork/AlignedMemoryAllocator.h" // nn::utils::AlignedMemoryAllocator
 
@@ -159,6 +164,11 @@ namespace nn
 		/// <param name="matrix1">First Matrix</param>
 		/// <param name="matrix2">Second Matrix</param>
 		void multiply(const Matrix<T>& matrix1, const Matrix<T>& matrix2);
+
+		/// <summary>
+		/// Performs matrix multiplication without avx. (For testing purposes)
+		/// </summary>
+		static void multiply_without_avx(const Matrix<T>& matrix1, const Matrix<T>& matrix2, Matrix<T>& result);
 
 		/// <summary>
 		/// Perform element wise multiplication on this matrix with other matrix and stores the result in this matrix.
@@ -431,6 +441,28 @@ void nn::Matrix<T>::multiply(const Matrix<T>& matrix1, const Matrix<T>& matrix2)
 	Matrix<T>::multiply(matrix1, matrix2, *this);
 }
 
+template<typename T>
+inline void nn::Matrix<T>::multiply_without_avx(const Matrix<T>& matrix1, const Matrix<T>& matrix2, Matrix<T>& result)
+{
+	// Initialize the result matrix to default values.
+	for (size_t i = 0; i < result.rows_ * result.cols_; i++)
+	{
+		result[i] = T();
+	}
+
+	// Perform matrix multiplication.
+	for (size_t i = 0; i < matrix1.get_rows(); i++)
+	{
+		for (size_t k = 0; k < matrix1.get_cols(); k++)
+		{
+			for (size_t j = 0; j < matrix2.get_cols(); j++)
+			{
+				result(i, j) += matrix1.at(i, k) * matrix2.at(k, j);
+			}
+		}
+	}
+}
+
 template <typename T>
 void nn::Matrix<T>::hadamard_product(const Matrix<T>& other)
 {
@@ -600,5 +632,87 @@ std::ostream& operator<<(std::ostream& os, const nn::Matrix<T>& matrix)
 
 
 #pragma region Float Specialization
+// Check if intrinsics are supported.
+#if defined(__AVX2__) || defined(__AVX__)
+//#if 0
+inline float sum8(const __m256& x) {
+	// hiQuad = ( x7, x6, x5, x4 )
+	const __m128 hiQuad = _mm256_extractf128_ps(x, 1);
+	// loQuad = ( x3, x2, x1, x0 )
+	const __m128 loQuad = _mm256_castps256_ps128(x);
+	// sumQuad = ( x3 + x7, x2 + x6, x1 + x5, x0 + x4 )
+	const __m128 sumQuad = _mm_add_ps(loQuad, hiQuad);
+	// loDual = ( -, -, x1 + x5, x0 + x4 )
+	const __m128 loDual = sumQuad;
+	// hiDual = ( -, -, x3 + x7, x2 + x6 )
+	const __m128 hiDual = _mm_movehl_ps(sumQuad, sumQuad);
+	// sumDual = ( -, -, x1 + x3 + x5 + x7, x0 + x2 + x4 + x6 )
+	const __m128 sumDual = _mm_add_ps(loDual, hiDual);
+	// lo = ( -, -, -, x0 + x2 + x4 + x6 )
+	const __m128 lo = sumDual;
+	// hi = ( -, -, -, x1 + x3 + x5 + x7 )
+	const __m128 hi = _mm_shuffle_ps(sumDual, sumDual, 0x1);
+	// sum = ( -, -, -, x0 + x1 + x2 + x3 + x4 + x5 + x6 + x7 )
+	const __m128 sum = _mm_add_ss(lo, hi);
+	return _mm_cvtss_f32(sum);
+}
+
+template <>
+inline void nn::Matrix<float>::multiply(const Matrix<float>& matrix1, const Matrix<float>& matrix2,
+                                        Matrix<float>& result)
+{
+	// Initialize the result matrix to zero using intrinsics but data may not always be multiple of 8.
+	for (size_t i = 0; i < (result.rows_ * result.cols_) / 8; ++i)
+	{
+		_mm256_store_ps(result.get_data() + i * 8, _mm256_setzero_ps());
+	}
+	for (size_t i = (result.rows_ * result.cols_) / 8 * 8; i < result.rows_ * result.cols_; ++i)
+	{
+		result[i] = 0.0f;
+	}
+
+	// Transpose the second matrix.
+	const auto transpose_matrix2 = matrix2.transpose();
+
+	// Perform matrix multiplication using intrinsics.
+	for (size_t m1_row = 0; m1_row < matrix1.get_rows(); ++m1_row)
+	{
+		const auto m1_row_offset = m1_row * matrix1.get_cols();
+		for (size_t m2_t_row = 0; m2_t_row < transpose_matrix2.get_rows(); ++m2_t_row)
+		{
+			const auto m2_t_row_offset = m2_t_row * transpose_matrix2.get_cols();
+			for (size_t cols = 0; cols < matrix1.get_cols() / 8; cols++)
+			{
+				// Load 8 elements from matrix1 and transpose_matrix2.
+				const __m256 m1_row_cols = _mm256_load_ps(matrix1.get_data() + m1_row_offset + cols * 8);
+				const __m256 m2_t_row_cols = _mm256_load_ps(transpose_matrix2.get_data() + m2_t_row_offset + cols * 8);
+
+				// Perform element wise multiplication.
+				const __m256 mul = _mm256_mul_ps(m1_row_cols, m2_t_row_cols);
+				// Accumulate the values in mul.
+				result(m1_row, m2_t_row) += sum8(mul);
+				
+			}
+			for (size_t cols = matrix1.get_cols() / 8 * 8; cols < matrix1.get_cols(); cols++)
+			{
+				result(m1_row, m2_t_row) += matrix1.at(m1_row, cols) * transpose_matrix2.at(m2_t_row, cols);
+			}
+		}
+	}
+}
+
+template <>
+inline void nn::Matrix<float>::multiply(const Matrix<float>& matrix1, const Matrix<float>& matrix2)
+{
+	if (matrix1.get_cols() != matrix2.get_rows() || this->get_rows() != matrix1.get_rows() || this->get_cols() !=
+		matrix2.get_cols())
+	{
+		throw std::runtime_error("Cannot multiply matrices with incompatible dimensions.");
+	}
+
+	multiply(matrix1, matrix2, *this);
+}
+
+#endif
 
 #pragma endregion
