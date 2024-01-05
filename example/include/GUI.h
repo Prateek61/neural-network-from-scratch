@@ -21,8 +21,17 @@ private:
 	std::unique_ptr<Button> predict_;
 	// Button for clearing the drawing
 	std::unique_ptr<Button> clear_;
-	// 340 * 340 boolean array for drawing
+	// 336 * 336 boolean array for drawing
 	std::unique_ptr<Drawing> drawing_;
+	// Is the neural network calculating
+	bool is_calculating_;
+	// Has the neural network finished calculating
+	bool is_finished_;
+	// The predicted number
+	 int predicted_number_;
+
+	// Calculate the predicted number
+	 void calculate_predicted_number();
 
 public:
 
@@ -31,6 +40,8 @@ public:
 
 	bool OnUserCreate() override;
 	bool OnUserUpdate(float elapsed_time) override;
+
+	void initialize_neural_network(const char* file_name);
 };
 
 // Button class
@@ -85,9 +96,11 @@ public:
 	void update(const olc::vi2d& mouse_position);
 	// Clear
 	void clear();
+	// Get data ( Image )
+	[[nodiscard]] std::array<float, 784> get_data() const;
 
-	// Drawing board
-	std::array<std::array<bool, 340>, 340> drawing;
+	// Drawing board ( 28 * 12, 28 * 12 )
+	std::array<std::array<bool, 336>, 336> drawing;
 	// Offset
 	olc::vi2d offset;
 };

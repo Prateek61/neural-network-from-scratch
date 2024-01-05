@@ -53,6 +53,25 @@ void nn::NeuralNetwork::feed_forward()
 	}
 }
 
+void nn::NeuralNetwork::feed_forward_with_input(const Matrix<float>& input)
+{
+	// Check if the input is valid
+	if (input.get_rows() != this->layers_.front()->get_neuron_count() || input.get_cols() != this->batch_size_)
+	{
+		throw std::runtime_error("Invalid input size.");
+	}
+
+	// first item of the list
+	this->layers_.front()->set_activations(input);
+
+	// iterate through the layers except the first one
+	for (auto it = std::next(this->layers_.begin()); it != this->layers_.end(); ++it)
+	{
+		const auto previous_layer = std::prev(it);
+		(*it)->feed_forward(*previous_layer->get());
+	}
+}
+
 void nn::NeuralNetwork::back_propagate()
 {
 	if (!this->is_ready())

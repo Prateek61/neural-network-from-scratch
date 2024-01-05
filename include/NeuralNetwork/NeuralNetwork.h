@@ -81,6 +81,12 @@ namespace nn
 		void feed_forward();
 
 		/// <summary>
+		/// Runs the forward propagation algorithm on the neural network with the given input.
+		/// </summary>
+		/// <param name="input">Given Input Matrix</param>
+		void feed_forward_with_input(const Matrix<float>& input);
+
+		/// <summary>
 		/// Runs the back propagation algorithm on the neural network.
 		/// </summary>
 		void back_propagate();
