@@ -35,7 +35,7 @@ namespace nn::activation_functions
 	/// <summary>
 	/// Sigmoid activation function
 	/// </summary>
-	class Sigmoid : public ActivationFunction
+	class Sigmoid final : public ActivationFunction
 	{
 	public:
 		/// <summary>
@@ -59,7 +59,7 @@ namespace nn::activation_functions
 	};
 
 
-	class ReLU : public ActivationFunction
+	class ReLU final : public ActivationFunction
 	{
 	public:
 		/// <summary>
@@ -76,7 +76,7 @@ namespace nn::activation_functions
 	};
 
 
-	class LeakyReLU : public ActivationFunction
+	class LeakyReLU final : public ActivationFunction
 	{
 	public:
 		/// <summary>
@@ -93,7 +93,7 @@ namespace nn::activation_functions
 	};
 
 
-	class Tanh : public ActivationFunction
+	class Tanh final : public ActivationFunction
 	{
 	public:
 		/// <summary>
@@ -107,5 +107,21 @@ namespace nn::activation_functions
 		/// </summary>
 		/// <param name="mat">Input matrix</param>
 		void derivative(Matrix<float> &mat) override;
+	};
+
+	class SoftMax final : public ActivationFunction
+	{
+	public:
+		/// <summary>
+		/// Performs the activation function on the input matrix
+		/// </summary>
+		/// <param name="mat">Input matrix</param>
+		void activate(Matrix<float>& mat) override;
+
+		/// <summary>
+		/// Performs the activation function derivative on the input matrix
+		/// </summary>
+		/// <param name="mat">Input matrix</param>
+		void derivative(Matrix<float>& mat) override;
 	};
 }
