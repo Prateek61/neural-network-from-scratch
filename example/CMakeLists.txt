@@ -18,13 +18,15 @@ add_definitions(-DMNIST_DATASET_DIR="${MNIST_DATASET_DIR}")
 # Set include files
 set(INCLUDE_FILES
     ${INCLUDE_DIR}/TrainSet.h
-    ${INCLUDE_DIR}/Utils.h
+    ${INCLUDE_DIR}/olcPixelGameEngine.h
+    ${INCLUDE_DIR}/GUI.h
 )
 
 # Set source files
 set(SOURCE_FILES
     ${SOURCE_DIR}/main.cpp
     ${SOURCE_DIR}/TrainSet.cpp
+    ${SOURCE_DIR}/GUI.cpp
 )
 
 # Add executable target

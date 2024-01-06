@@ -8,6 +8,7 @@
 #include <stdexcept> // std::runtime_error
 #include <vector>	 // std::vector
 #include <iostream> // std::ostream
+#include <chrono> // std::chrono
 
 // Check if Intel MKL is available.
 #if defined(__has_include) && __has_include(<mkl.h>)
@@ -17,7 +18,6 @@
 #endif
 
 #include "NeuralNetwork/AlignedMemoryAllocator.h" // nn::utils::AlignedMemoryAllocator
-
 
 namespace nn
 {
