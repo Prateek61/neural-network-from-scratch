@@ -29,25 +29,13 @@ namespace nn::activation_functions
 		/// </summary>
 		/// <param name="mat">Input matrix</param>
 		virtual void derivative(Matrix<float> &mat) = 0;
-
-		/// <summary>
-		/// Performs the activation function on the input matrix
-		/// </summary>
-		/// <param name="mat">Input matrix</param>
-		virtual void activate(Matrix<double> &mat) = 0;
-
-		/// <summary>
-		/// Performs the activation function derivative on the input matrix
-		/// </summary>
-		/// <param name="mat">Input matrix</param>
-		virtual void derivative(Matrix<double> &mat) = 0;
 	};
 
 
 	/// <summary>
 	/// Sigmoid activation function
 	/// </summary>
-	class Sigmoid : public ActivationFunction
+	class Sigmoid final : public ActivationFunction
 	{
 	public:
 		/// <summary>
@@ -68,52 +56,10 @@ namespace nn::activation_functions
 		/// </summary>
 		/// <param name="mat">Input matrix</param>
 		void derivative(Matrix<float> &mat) override;
-
-		/// <summary>
-		/// Performs the activation function on the input matrix
-		/// </summary>
-		/// <param name="mat">Input matrix</param>
-		void activate(Matrix<double> &mat) override;
-
-		/// <summary>
-		/// Performs the activation function derivative on the input matrix
-		/// </summary>
-		/// <param name="mat">Input matrix</param>
-		void derivative(Matrix<double> &mat) override;
 	};
 
 
-	class ReLU : public ActivationFunction
-	{
-		const std::string activation_function_name_ = "ReLU";
-	public:
-		/// <summary>
-		/// Performs the activation function on the input matrix
-		/// </summary>
-		/// <param name="mat">Input matrix</param>
-		void activate(Matrix<float> &mat) override;
-
-		/// <summary>
-		/// Performs the activation function derivative on the input matrix
-		/// </summary>
-		/// <param name="mat">Input matrix</param>
-		void derivative(Matrix<float> &mat) override;
-
-		/// <summary>
-		/// Performs the activation function on the input matrix
-		/// </summary>
-		/// <param name="mat">Input matrix</param>
-		void activate(Matrix<double> &mat) override;
-
-		/// <summary>
-		/// Performs the activation function derivative on the input matrix
-		/// </summary>
-		/// <param name="mat">Input matrix</param>
-		void derivative(Matrix<double> &mat) override;
-	};
-
-
-	class LeakyReLU : public ActivationFunction
+	class ReLU final : public ActivationFunction
 	{
 	public:
 		/// <summary>
@@ -127,22 +73,10 @@ namespace nn::activation_functions
 		/// </summary>
 		/// <param name="mat">Input matrix</param>
 		void derivative(Matrix<float> &mat) override;
-
-		/// <summary>
-		/// Performs the activation function on the input matrix
-		/// </summary>
-		/// <param name="mat">Input matrix</param>
-		void activate(Matrix<double> &mat) override;
-
-		/// <summary>
-		/// Performs the activation function derivative on the input matrix
-		/// </summary>
-		/// <param name="mat">Input matrix</param>
-		void derivative(Matrix<double> &mat) override;
 	};
 
 
-	class Tanh : public ActivationFunction
+	class LeakyReLU final : public ActivationFunction
 	{
 	public:
 		/// <summary>
@@ -156,17 +90,38 @@ namespace nn::activation_functions
 		/// </summary>
 		/// <param name="mat">Input matrix</param>
 		void derivative(Matrix<float> &mat) override;
+	};
 
+
+	class Tanh final : public ActivationFunction
+	{
+	public:
 		/// <summary>
 		/// Performs the activation function on the input matrix
 		/// </summary>
 		/// <param name="mat">Input matrix</param>
-		void activate(Matrix<double> &mat) override;
+		void activate(Matrix<float> &mat) override;
 
 		/// <summary>
 		/// Performs the activation function derivative on the input matrix
 		/// </summary>
 		/// <param name="mat">Input matrix</param>
-		void derivative(Matrix<double> &mat) override;
+		void derivative(Matrix<float> &mat) override;
+	};
+
+	class SoftMax final : public ActivationFunction
+	{
+	public:
+		/// <summary>
+		/// Performs the activation function on the input matrix
+		/// </summary>
+		/// <param name="mat">Input matrix</param>
+		void activate(Matrix<float>& mat) override;
+
+		/// <summary>
+		/// Performs the activation function derivative on the input matrix
+		/// </summary>
+		/// <param name="mat">Input matrix</param>
+		void derivative(Matrix<float>& mat) override;
 	};
 }

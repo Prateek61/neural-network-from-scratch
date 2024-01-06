@@ -18,6 +18,7 @@ add_definitions(-DMNIST_DATASET_DIR="${MNIST_DATASET_DIR}")
 # Set include files
 set(INCLUDE_FILES
     ${INCLUDE_DIR}/TrainSet.h
+    ${INCLUDE_DIR}/Utils.h
 )
 
 # Set source files

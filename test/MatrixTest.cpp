@@ -70,9 +70,9 @@ TEST(MatrixTest, ElementAccessOperator)
 TEST(MatrixTest, MatrixMultiplication)
 {
 	// Initialize matrices
-	nn::Matrix<int> mat1(2, 3);
-	nn::Matrix<int> mat2(3, 2);
-	nn::Matrix<int> result(2, 2);
+	nn::Matrix<float> mat1(2, 3);
+	nn::Matrix<float> mat2(3, 2);
+	nn::Matrix<float> result(2, 2);
 
 	// Initialize matrix data (you may use loops or fill the matrices appropriately)
 
@@ -96,7 +96,7 @@ TEST(MatrixTest, MatrixMultiplication)
 	constexpr int expected_result[4] = {58, 64, 139, 154};
 
 	// Perform matrix multiplication
-	ASSERT_NO_THROW(nn::Matrix<int>::multiply(mat1, mat2, result));
+	ASSERT_NO_THROW(nn::Matrix<float>::multiply(mat1, mat2, result));
 
 	// Validate the result
 	for (size_t i = 0; i < result.get_rows(); ++i)
@@ -104,6 +104,35 @@ TEST(MatrixTest, MatrixMultiplication)
 		for (size_t j = 0; j < result.get_cols(); ++j)
 		{
 			ASSERT_EQ(result(i, j), expected_result[i * result.get_cols() + j]);
+		}
+	}
+}
+
+// Test case for matrix multiplication but with big matrix(This test case is for testing the AVX implementation)
+TEST(MatrixTest, MatrixMultiplicationBig)
+{
+	// Initialize the matrices
+	nn::Matrix<float> mat1(100, 100);
+	nn::Matrix<float> mat2(100, 100);
+	nn::Matrix<float> result_avx_implementation(100, 100);
+	nn::Matrix<float> result_normal_implementation(100, 100);
+
+	// Initialize mat1 and mat2 with random values
+	mat1.randomize(0.0f, 10.0f);
+	mat2.randomize(0.0f, 10.0f);
+
+	// Perform matrix multiplication
+	nn::Matrix<float>::multiply(mat1, mat2, result_avx_implementation);
+
+	// Perform matrix multiplication using normal implementation
+	nn::Matrix<float>::multiply_without_avx(mat1, mat2, result_normal_implementation);
+
+	// Validate the result
+	for (size_t i = 0; i < result_avx_implementation.get_rows(); ++i)
+	{
+		for (size_t j = 0; j < result_avx_implementation.get_cols(); ++j)
+		{
+			ASSERT_NEAR(result_avx_implementation(i, j), result_normal_implementation(i, j), 0.1f);
 		}
 	}
 }
