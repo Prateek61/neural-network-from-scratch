@@ -1,14 +1,14 @@
 // File: example/main.cpp
 // Purpose: Example file for NeuralNetwork Library.
 
-#define OLC_PGE_APPLICATION
-#include "GUI.h"
+#include <chrono>
+
+#include "TrainSet.h"
+#include "Utils.h"
 
 int main()
 {
-	GUI gui;
-	if (gui.Construct(540, 360, 2, 2))
-		gui.Start();
+	trainer();
 
 	return 0;
 }

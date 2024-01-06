@@ -95,10 +95,6 @@ void TrainSet::initialize(const size_t batch_size)
 	this->images_in_batches.resize(num_batches);
 	this->labels_in_batches.resize(num_batches);
 
-	// Create a clock
-	auto start = std::chrono::high_resolution_clock::now();
-	auto end = std::chrono::high_resolution_clock::now();
-
 	auto pixel_buffer = std::make_unique<uint8_t[]>(this->num_rows * this->num_cols * batch_size);
 	auto label_buffer = std::make_unique<uint8_t[]>(batch_size);
 
