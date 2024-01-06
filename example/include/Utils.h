@@ -34,7 +34,7 @@ inline void setup_network(const std::vector<int>& structure, nn::NeuralNetwork& 
 
 inline void train_and_test(const int batch_size, const int num_epochs, const float learning_rate, const int print_every,
                            const std::vector<int>& structure, const bool print, const bool print_to_file,
-                           const std::string& file_name)
+                           const std::string& file_name, const std::string& network_store_file = "")
 {
 	// Create a clock
 	const auto start = std::chrono::high_resolution_clock::now();
@@ -132,6 +132,12 @@ inline void train_and_test(const int batch_size, const int num_epochs, const flo
 		file << batch_size << ',' << num_epochs << ',' << learning_rate << ',' << train_set_loss << ',' << train_set_accuracy << ',' << test_set_loss << ',' << test_set_accuracy << ',' << time_taken_sec << '\n';
 
 		file.close();
+	}
+
+	// Save the network if a file name is given
+	if (!network_store_file.empty())
+	{
+		nn.save_to_file(network_store_file);
 	}
 }
 

@@ -20,6 +20,7 @@ set(INCLUDE_FILES
     ${INCLUDE_DIR}/TrainSet.h
     ${INCLUDE_DIR}/olcPixelGameEngine.h
     ${INCLUDE_DIR}/GUI.h
+    ${INCLUDE_DIR}/Utils.h
 )
 
 # Set source files

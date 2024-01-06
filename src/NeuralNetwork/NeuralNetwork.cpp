@@ -214,21 +214,85 @@ void nn::NeuralNetwork::save_to_file(const std::string& file_name) const
 	{
 		// Write number of neurons
 		file << layer->get_neuron_count() << "\n";
-		// Write the name of activation function class with RTTI
-		file << typeid(*layer->get_activation_function()).name() << "\n";
 
-		// Check if the layer is the first layer
-		if (layer == this->layers_.front())
-		{
-			// Write the input size
-			file << layer->get_neuron_count() << "\n";
-		}
-		else // Not the first layer
+		// Check if its not the first layer
+		if (layer != layers_.front())
 		{
 			// Write dimensions of the weights matrix
 			file << layer->get_weights().get_rows() << " " << layer->get_weights().get_cols() << "\n";
 			// Write the weights matrix
-			file << layer->get_weights() << "\n";
+			file << layer->get_weights();
+			// Write dimensions of the biases matrix
+			file << layer->get_biases().get_rows() << " " << layer->get_biases().get_cols() << "\n";
+			// Write the biases matrix
+			file << layer->get_biases();
+		}
+	}
+}
+
+void nn::NeuralNetwork::load_from_file(const std::string& file_name)
+{
+	// Open file
+	std::ifstream file(file_name);
+	if (!file.is_open())
+	{
+		throw std::runtime_error("Could not open file.");
+	}
+
+	size_t num_layers = 0;
+	float learning_rate = 0.0f;
+
+	// Read general information
+	file >> learning_rate;
+	file >> num_layers;
+	// Set the learning rate
+	this->learning_rate_ = learning_rate;
+
+	// Read information for each layer
+	for (size_t i = 0; i < num_layers; ++i)
+	{
+		size_t num_neurons = 0;
+		file >> num_neurons;
+
+		// First layer
+		if (i == 0)
+		{
+			auto layer = std::make_unique<Layer>(num_neurons, 1);
+			this->add_layer(std::move(layer));
+		}
+		// Other layers
+		else
+		{
+			// Weights matrix
+			size_t w_cols, w_rows;
+			file >> w_rows >> w_cols;
+			Matrix<float> weights(w_rows, w_cols);
+			float temp;
+			// Read the weights matrix
+			for (size_t j = 0; j < w_rows * w_cols; ++j)
+			{
+				file >> temp;
+				weights[j] = temp;
+			}
+
+			// Biases matrix
+			size_t b_cols, b_rows;
+			file >> b_rows >> b_cols;
+			Matrix<float> biases(b_rows, b_cols);
+			// Read the biases matrix
+			for (size_t j = 0; j < b_rows * b_cols; ++j)
+			{
+				file >> biases[j];
+			}
+
+			// Add the layer
+			auto layer = std::make_unique<Layer>(num_neurons, 1, w_cols);
+			// Set the weights and biases
+			layer->set_weights(weights);
+			layer->set_biases(biases);
+
+			// Add the layer
+			this->add_layer(std::move(layer));
 		}
 	}
 }

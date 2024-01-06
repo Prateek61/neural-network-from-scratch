@@ -33,6 +33,8 @@ void GUI::calculate_predicted_number()
 		}
 	}
 
+	std::cout << "Output:\n " << output << std::endl;
+
 	this->predicted_number_ = static_cast<int>(max_index);
 	this->is_calculating_ = false;
 	this->is_finished_ = true;
@@ -90,7 +92,12 @@ bool GUI::OnUserUpdate(float elapsed_time)
 	if (this->is_finished_)
 	{
 		// Draw the predicted number
-		DrawString(400, 140,  "Prediction: " + std::to_string(this->predicted_number_), olc::WHITE, 2);
+		DrawString(400, 140, "Prediction: " + std::to_string(this->predicted_number_), olc::WHITE, 1);
+	}
+	if (this->is_calculating_)
+	{
+		// Draw the calculating text
+		DrawString(400, 140, "Calculating...", olc::WHITE, 1);
 	}
 
 	// Draw the drawing array
@@ -203,7 +210,7 @@ void Drawing::update(const olc::vi2d& mouse_position)
 		const int x = mouse_position.x - this->offset.x;
 		const int y = mouse_position.y - this->offset.y;
 
-		constexpr int radius = 24;
+		constexpr int radius = 12;
 
 		const int x_bottom_bound = std::max(0, x - radius);
 		const int x_top_bound = std::min(336, x + radius);
@@ -251,8 +258,8 @@ std::array<float, 784> Drawing::get_data() const
 		for (int y = 0; y < this->drawing[0].size(); ++y)
 		{
 			// Calculate the position in the data array
-			const int data_x = x / 12;
-			const int data_y = y / 12;
+			const int data_x = y / 12;
+			const int data_y = x / 12;
 
 			// Update the data array
 			data[data_x * 28 + data_y] += static_cast<float>(this->drawing[x][y]);
