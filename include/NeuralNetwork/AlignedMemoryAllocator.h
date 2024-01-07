@@ -5,6 +5,7 @@
 
 #include <stdexcept> // std::logic_error
 #include <iostream> // std::ostream
+#include <cstring> // memcpy
 
 namespace nn::utils
 {
@@ -139,7 +140,7 @@ nn::utils::AlignedMemoryAllocator<T, Alignment>::AlignedMemoryAllocator(const si
 }
 
 template <typename T, size_t Alignment>
-nn::utils::AlignedMemoryAllocator<T, Alignment>::~AlignedMemoryAllocator<T, Alignment>()
+nn::utils::AlignedMemoryAllocator<T, Alignment>::~AlignedMemoryAllocator()
 {
 	this->delete_data();
 }

@@ -13,7 +13,7 @@
 // Check if Intel MKL is available.
 #if defined(__has_include) && __has_include(<mkl.h>)
 #include <mkl.h>
-#else defined(__AVX2__) || defined(__AVX__)
+#elif defined(__AVX2__) || defined(__AVX__)
 #include <immintrin.h>
 #endif
 
@@ -661,7 +661,7 @@ inline void nn::Matrix<float>::multiply(const Matrix<float>& matrix1, const Matr
 		static_cast<int>(result.get_cols()));
 }
 
-#else defined(__AVX2__) || defined(__AVX__)
+#elif defined(__AVX2__) || defined(__AVX__)
 
 template <>
 inline void nn::Matrix<float>::multiply(const Matrix<float>& matrix1, const Matrix<float>& matrix2,
