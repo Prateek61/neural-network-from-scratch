@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <string_view>
 
 #include <chrono>
 
@@ -31,6 +32,7 @@ TrainSet::TrainSet(const std::string_view images_file_path, const std::string_vi
 	labels_file.read(reinterpret_cast<char*>(&l_num_labels), sizeof(l_num_labels));
 
 	// swap endianness
+#if MSVC
 	magic_number_images = _byteswap_ulong(magic_number_images);
 	l_num_images = _byteswap_ulong(l_num_images);
 	l_num_rows = _byteswap_ulong(l_num_rows);
@@ -38,6 +40,17 @@ TrainSet::TrainSet(const std::string_view images_file_path, const std::string_vi
 
 	magic_number_labels = _byteswap_ulong(magic_number_labels);
 	l_num_labels = _byteswap_ulong(l_num_labels);
+#elif __GNUC__
+	magic_number_images = __builtin_bswap32(magic_number_images);
+	l_num_images = __builtin_bswap32(l_num_images);
+	l_num_rows = __builtin_bswap32(l_num_rows);
+	l_num_cols = __builtin_bswap32(l_num_cols);
+
+	magic_number_labels = __builtin_bswap32(magic_number_labels);
+	l_num_labels = __builtin_bswap32(l_num_labels);
+#else
+	throw std::runtime_error("Not implemented.");
+#endif
 
 	// Print info
 	std::cout << "Images file header:\n";

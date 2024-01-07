@@ -6,6 +6,7 @@
 #include "olcPixelGameEngine.h"
 
 #include <memory>
+#include <string_view>
 
 #include <NeuralNetwork/NeuralNetwork.h>
 

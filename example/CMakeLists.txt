@@ -47,3 +47,29 @@ add_custom_command(
         ${CURRENT_DIR}/dataset
         ${MNIST_DATASET_DIR}
 )
+
+if (UNIX)
+# Add configurations for olc::PixelGameEngine
+target_link_libraries(${PROJECT_NAME} PRIVATE pthread X11 GL GLU png z)
+endif()
+
+# If emscripten is used
+if (EMSCRIPTEN)
+    # Make emscripten create a html file as entry point
+    set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
+
+    target_link_options(${PROJECT_NAME} 
+        PRIVATE
+        -sUSE_LIBPNG=1
+        -sMIN_WEBGL_VERSION=2
+        -sMAX_WEBGL_VERSION=2
+        -sALLOW_MEMORY_GROWTH=1
+        -sNO_DISABLE_EXCEPTION_CATCHING=1
+        # --preload-file ${CMAKE_BINARY_DIR}/dataset@/data
+        --embed-file ${CMAKE_SOURCE_DIR}/example/dataset@/
+    )
+
+    # Add compile flag -O3
+    target_compile_options(${PROJECT_NAME} PRIVATE -O3)
+endif()
+

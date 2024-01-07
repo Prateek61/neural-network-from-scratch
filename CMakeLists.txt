@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 project(NeuralNetwork LANGUAGES CXX)
 
 # Set the policy CMP0135 to use the new behavior for FetchContent
-cmake_policy(SET CMP0135 NEW)
+# cmake_policy(SET CMP0135 NEW)
 
 # Set C++ Standard
 set(CMAKE_CXX_STANDARD 17)
@@ -86,7 +86,7 @@ if(WIN32 AND USE_MKL)
 endif()
 
 # If the compiler is mingw
-if(MINGW)
+if(MINGW OR CMAKE_COMPILER_IS_GNUCXX)
     # If build type is not set, set to release
     if(NOT CMAKE_BUILD_TYPE)
         set(CMAKE_BUILD_TYPE Release)
@@ -135,4 +135,10 @@ if(BUILD_EXAMPLE)
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMENT "***********************  Running examples  ***************************"
     )
+endif()
+
+# If emscripten is used
+if (EMSCRIPTEN)
+    # Add compile flag -O3
+    target_compile_options(${PROJECT_NAME} PRIVATE -O3)
 endif()
