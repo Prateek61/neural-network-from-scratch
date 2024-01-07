@@ -1,5 +1,8 @@
 # Neural Network From Scratch
 
+## [Example](https://prateek61.github.io/neural-network-from-scratch/) 
+> (Compiled for the web with [Emscripten](https://emscripten.org/))
+
 ## Run Locally
 <!-- Say project is setup with cmake and give link -->
 The project is setup with [cmake](https://cmake.org/). To run the project locally, follow the steps below:
