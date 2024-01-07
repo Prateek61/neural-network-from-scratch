@@ -38,18 +38,21 @@ set(INCLUDE_FILES
     ${INCLUDE_DIR_INCLUDES}/DataSet.h
 )
 
+option(USE_INTRINSICS "Use Intrinsics" ON)
 # If the compiler is MSVC
-if(MSVC)
-    # Enable AVX2 Intrinsics
-    add_compile_options(/arch:AVX2)
-else()
-    # Enable Intrinsics if supported
-    include(CheckCXXCompilerFlag)
-    CHECK_CXX_COMPILER_FLAG("-mavx2" COMPILER_SUPPORTS_AVX2)
-    CHECK_CXX_COMPILER_FLAG("-mfma" COMPILER_SUPPORTS_FMA)
-
-    if(COMPILER_SUPPORTS_AVX2 AND COMPILER_SUPPORTS_FMA)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2 -mfma")
+if(Use_INTRINSICS)
+    if(MSVC)
+        # Enable AVX2 Intrinsics
+        add_compile_options(/arch:AVX2)
+    else()
+        # Enable Intrinsics if supported
+        include(CheckCXXCompilerFlag)
+        CHECK_CXX_COMPILER_FLAG("-mavx2" COMPILER_SUPPORTS_AVX2)
+        CHECK_CXX_COMPILER_FLAG("-mfma" COMPILER_SUPPORTS_FMA)
+    
+        if(COMPILER_SUPPORTS_AVX2 AND COMPILER_SUPPORTS_FMA)
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2 -mfma")
+        endif()
     endif()
 endif()
 

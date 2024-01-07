@@ -33,8 +33,6 @@ void GUI::calculate_predicted_number()
 		}
 	}
 
-	std::cout << "Output:\n " << output << std::endl;
-
 	this->predicted_number_ = static_cast<int>(max_index);
 	this->is_calculating_ = false;
 	this->is_finished_ = true;
@@ -56,7 +54,6 @@ bool GUI::OnUserCreate()
 	this->predict_ = std::make_unique<Button>(olc::vi2d(400, 10), olc::vi2d(130, 50), "Predict", olc::GREEN, [&]()
 	{
 		this->calculate_predicted_number();
-		std::cout << "Predicted number: " << this->predicted_number_ << std::endl;
 	});
 	// Initialize the clear button
 	this->clear_ = std::make_unique<Button>(olc::vi2d(400, 70), olc::vi2d(130, 50), "Clear", olc::RED, [&]()
