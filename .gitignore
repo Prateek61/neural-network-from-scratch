@@ -3,5 +3,6 @@ build
 build_test
 data
 Makefile
+example/dataset
 .vs
 .vscode
