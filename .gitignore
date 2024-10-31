@@ -1,7 +1,22 @@
-out
-build
-build_test
-data
-Makefile
-.vs
-.vscode
+# Editor directories
+.vscode/
+
+# Visual Studio Project Files
+.vs/
+**.user
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.csproj
+
+# Binary files
+**/bin/
+bin-int/
+Intermediates/
+
+# MakeFile
+**/MakeFile
+**.make
+
+# Profile
+**.profile.json
